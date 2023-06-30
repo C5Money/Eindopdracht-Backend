@@ -17,7 +17,6 @@ public class CustomerCard {
     @Id
     @GeneratedValue
     private Long id;
-    @NotBlank
     private String cardNumber;
     private double amountSpend;
     private CardStatus cardStatus;

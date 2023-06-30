@@ -1,7 +1,7 @@
 package com.example.sparkle.services;
 
-import com.example.sparkle.dtos.CustomerCardInputDto;
-import com.example.sparkle.dtos.CustomerCardOutputDto;
+import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
+import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.models.CustomerCard;
 import com.example.sparkle.repositories.CustomerCardRepository;
@@ -23,9 +23,11 @@ private final CustomerCardRepository customerCardRepository;
 //    ----------------------------------------------------------------------
 //    Create
 //    ----------------------------------------------------------------------
-    public CustomerCardInputDto createCustomerCard(CustomerCardInputDto cardInputDto){
-        customerCardRepository.save(inputDtoToEntity(cardInputDto));
-        return cardInputDto;
+    public Long createCustomerCard(CustomerCardInputDto cardInputDto){
+        CustomerCard newCustomerCardEntity = inputDtoToEntity(cardInputDto);
+        customerCardRepository.save(newCustomerCardEntity);
+
+        return newCustomerCardEntity.getId();
     }
 //    ----------------------------------------------------------------------
 //    Read
@@ -49,16 +51,25 @@ private final CustomerCardRepository customerCardRepository;
 //    ----------------------------------------------------------------------
 //    Update
 //    ----------------------------------------------------------------------
-    public CustomerCardOutputDto updateOneCustomerCard(CustomerCardInputDto cardInputDto, Long id){
-        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(id);
-        if(optionalCustomerCard.isEmpty() || id <= 0){
-            throw new ResourceNotFoundException("This id: " + id + " is not found.");
-        }
-        CustomerCardOutputDto updatableOutputDto = entityToOutputDto(optionalCustomerCard.get());
+//    public CustomerCardOutputDto updateOneCustomerCard(CustomerCardInputDto cardInputDto, Long id){
+//        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(id);
+//        if(optionalCustomerCard.isEmpty() || id <= 0){
+//            throw new ResourceNotFoundException("This id: " + id + " is not found.");
+//        }
+//        CustomerCardOutputDto updatableOutputDto = entityToOutputDto(optionalCustomerCard.get());
+//
+//        customerCardRepository.save(inputDtoToEntity(cardInputDto));
+//        return updatableOutputDto;
+//    }
 
-        customerCardRepository.save(inputDtoToEntity(cardInputDto));
-        return updatableOutputDto;
+    public CustomerCardOutputDto updateOneCustomerCard(CustomerCardInputDto cardInputDto, Long id) throws ResourceNotFoundException{
+        CustomerCard excistingCustomerCard = customerCardRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found"));
+        CustomerCard updatedCustomerCard = updateInputDtoToEntity(cardInputDto, excistingCustomerCard);
+
+        CustomerCard savedCustomerCard = customerCardRepository.save(updatedCustomerCard);
+        return entityToOutputDto(savedCustomerCard);
     }
+
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
@@ -80,6 +91,22 @@ private final CustomerCardRepository customerCardRepository;
         cardEntity.setCardNumber(cardInputDto.cardNumber);
         cardEntity.setCardStatus(cardInputDto.cardStatus);
         cardEntity.setAmountSpend(cardInputDto.amountSpend);
+        return cardEntity;
+    }
+
+    public CustomerCard updateInputDtoToEntity(CustomerCardInputDto cardInputDto, CustomerCard cardEntity){
+        if(cardInputDto.id != null){
+            cardEntity.setId(cardInputDto.id);
+        }
+        if(cardInputDto.cardNumber != null){
+            cardEntity.setCardNumber(cardInputDto.cardNumber);
+        }
+        if(cardInputDto.cardStatus != null){
+            cardEntity.setCardStatus(cardInputDto.cardStatus);
+        }
+//        if(cardInputDto.amountSpend != null){
+//            cardEntity.setAmountSpend(cardInputDto.amountSpend);
+//        }
         return cardEntity;
     }
 //    ----------------------------------------------------------------------

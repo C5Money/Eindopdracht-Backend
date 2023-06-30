@@ -1,8 +1,7 @@
 package com.example.sparkle.controllers;
 
-import com.example.sparkle.dtos.CustomerCardInputDto;
-import com.example.sparkle.dtos.CustomerCardOutputDto;
-import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
+import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
 import com.example.sparkle.services.CustomerCardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +26,10 @@ public class CustomerCardController {
 //    ----------------------------------------------------------------------
     @PostMapping
     public ResponseEntity<CustomerCardInputDto> createCustomerCard(@RequestBody CustomerCardInputDto cardInputDto){
-        CustomerCardInputDto newCardDto = cardService.createCustomerCard(cardInputDto);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newCardDto.id ).toUriString());
-        return ResponseEntity.created(uri).body(newCardDto);
+        Long newCardDto = cardService.createCustomerCard(cardInputDto);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newCardDto ).toUriString());
+        cardInputDto.id = newCardDto;
+        return ResponseEntity.created(uri).body(cardInputDto);
     }
 //    ----------------------------------------------------------------------
 //    Get
