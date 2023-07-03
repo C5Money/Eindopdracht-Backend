@@ -26,7 +26,6 @@ private final CustomerCardRepository customerCardRepository;
     public Long createCustomerCard(CustomerCardInputDto cardInputDto){
         CustomerCard newCustomerCardEntity = inputDtoToEntity(cardInputDto);
         customerCardRepository.save(newCustomerCardEntity);
-
         return newCustomerCardEntity.getId();
     }
 //    ----------------------------------------------------------------------
@@ -35,7 +34,7 @@ private final CustomerCardRepository customerCardRepository;
     public CustomerCardOutputDto readOneCustomerCard(Long id){
         Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(id);
         if(optionalCustomerCard.isEmpty() || id <= 0){
-            throw new ResourceNotFoundException("This id: " + id + " is invalid.");
+            throw new ResourceNotFoundException("This id: " + id + " is invalid or doesn't exist.");
         }
         return entityToOutputDto(optionalCustomerCard.get());
     }
@@ -51,32 +50,19 @@ private final CustomerCardRepository customerCardRepository;
 //    ----------------------------------------------------------------------
 //    Update
 //    ----------------------------------------------------------------------
-//    public CustomerCardOutputDto updateOneCustomerCard(CustomerCardInputDto cardInputDto, Long id){
-//        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(id);
-//        if(optionalCustomerCard.isEmpty() || id <= 0){
-//            throw new ResourceNotFoundException("This id: " + id + " is not found.");
-//        }
-//        CustomerCardOutputDto updatableOutputDto = entityToOutputDto(optionalCustomerCard.get());
-//
-//        customerCardRepository.save(inputDtoToEntity(cardInputDto));
-//        return updatableOutputDto;
-//    }
-
-    public CustomerCardOutputDto updateOneCustomerCard(CustomerCardInputDto cardInputDto, Long id) throws ResourceNotFoundException{
-        CustomerCard excistingCustomerCard = customerCardRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found"));
-        CustomerCard updatedCustomerCard = updateInputDtoToEntity(cardInputDto, excistingCustomerCard);
-
-        CustomerCard savedCustomerCard = customerCardRepository.save(updatedCustomerCard);
-        return entityToOutputDto(savedCustomerCard);
+    public CustomerCardOutputDto updateOneCustomerCard(CustomerCardInputDto cardInputDto, Long id){
+        CustomerCard optionalCustomerCard = customerCardRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("This id: " + id + " does not exist."));
+        CustomerCard updatedCustomerCard = updateInputDtoToEntity(cardInputDto, optionalCustomerCard);
+        customerCardRepository.save(updatedCustomerCard);
+        return entityToOutputDto(updatedCustomerCard);
     }
-
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
     public void deleteOneCustomerCard(Long id){
         Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(id);
         if (optionalCustomerCard.isEmpty() || id <= 0){
-            throw new ResourceNotFoundException("This id: " + id + " is invalid.");
+            throw new ResourceNotFoundException("This id: " + id + " is invalid or doesn't exist.");
         }
         customerCardRepository.deleteById(id);
     }
@@ -87,10 +73,18 @@ private final CustomerCardRepository customerCardRepository;
 //    ----------------------------------------------------------------------
     public CustomerCard inputDtoToEntity(CustomerCardInputDto cardInputDto){
         CustomerCard cardEntity = new CustomerCard();
-        cardEntity.setId(cardInputDto.id);
-        cardEntity.setCardNumber(cardInputDto.cardNumber);
-        cardEntity.setCardStatus(cardInputDto.cardStatus);
-        cardEntity.setAmountSpend(cardInputDto.amountSpend);
+        if(cardInputDto.id != null){
+            cardEntity.setId(cardInputDto.id);
+        }
+        if(cardInputDto.cardNumber != null){
+            cardEntity.setCardNumber(cardInputDto.cardNumber);
+        }
+        if(cardInputDto.cardStatus != null){
+            cardEntity.setCardStatus(cardInputDto.cardStatus);
+        }
+        if(cardInputDto.amountSpend != null){
+            cardEntity.setAmountSpend(cardInputDto.amountSpend);
+        }
         return cardEntity;
     }
 
@@ -104,9 +98,9 @@ private final CustomerCardRepository customerCardRepository;
         if(cardInputDto.cardStatus != null){
             cardEntity.setCardStatus(cardInputDto.cardStatus);
         }
-//        if(cardInputDto.amountSpend != null){
-//            cardEntity.setAmountSpend(cardInputDto.amountSpend);
-//        }
+        if(cardInputDto.amountSpend != null){
+            cardEntity.setAmountSpend(cardInputDto.amountSpend);
+        }
         return cardEntity;
     }
 //    ----------------------------------------------------------------------

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
@@ -15,7 +17,7 @@ public class Product {
     private Long id;
     private String productName;
     private String articleNumber;
-    private Double price;
+    private BigDecimal price;
     private Double availableStock;
     private String category;
 

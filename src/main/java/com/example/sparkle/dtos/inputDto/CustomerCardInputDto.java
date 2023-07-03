@@ -5,6 +5,8 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
+
 public class CustomerCardInputDto {
     //    DTO Variables
     public Long id;
@@ -13,7 +15,7 @@ public class CustomerCardInputDto {
     public String cardNumber;
     @NotBlank(message = "Amount is required")
     @DecimalMin(value = "0.0", message = "Price must be a positive number")
-    public double amountSpend;
+    public BigDecimal amountSpend;
 
     public CardStatus cardStatus;
 }

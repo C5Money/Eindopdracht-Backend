@@ -1,11 +1,11 @@
 package com.example.sparkle.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 
 @Getter
@@ -18,6 +18,6 @@ public class CustomerCard {
     @GeneratedValue
     private Long id;
     private String cardNumber;
-    private double amountSpend;
+    private BigDecimal amountSpend;
     private CardStatus cardStatus;
 }

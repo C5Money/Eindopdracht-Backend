@@ -3,13 +3,17 @@ package com.example.sparkle.controllers;
 import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
 import com.example.sparkle.services.CustomerCardService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/customercards")
@@ -25,7 +29,16 @@ public class CustomerCardController {
 //    Post
 //    ----------------------------------------------------------------------
     @PostMapping
-    public ResponseEntity<CustomerCardInputDto> createCustomerCard(@RequestBody CustomerCardInputDto cardInputDto){
+    public ResponseEntity<Object> createCustomerCard(@Valid @RequestBody CustomerCardInputDto cardInputDto, BindingResult bindingResult){
+        if(bindingResult.hasFieldErrors()){
+            StringBuilder stringBuilder = new StringBuilder();
+            for(FieldError fieldError : bindingResult.getFieldErrors()){
+                stringBuilder.append(fieldError.getField() + ": ");
+                stringBuilder.append(fieldError.getDefaultMessage());
+                stringBuilder.append("\n");
+            }
+            return ResponseEntity.badRequest().body(stringBuilder.toString());
+        }
         Long newCardDto = cardService.createCustomerCard(cardInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newCardDto ).toUriString());
         cardInputDto.id = newCardDto;
