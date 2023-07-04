@@ -20,6 +20,4 @@ public class Product {
     private BigDecimal price;
     private Double availableStock;
     private String category;
-
-
 }
