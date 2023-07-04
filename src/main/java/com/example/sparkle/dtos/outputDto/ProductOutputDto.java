@@ -1,5 +1,6 @@
 package com.example.sparkle.dtos.outputDto;
 
+
 import java.math.BigDecimal;
 
 public class ProductOutputDto {

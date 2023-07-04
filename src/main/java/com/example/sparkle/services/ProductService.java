@@ -1,11 +1,8 @@
 package com.example.sparkle.services;
 
-import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.inputDto.ProductInputDto;
-import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
 import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
-import com.example.sparkle.models.CustomerCard;
 import com.example.sparkle.models.Product;
 import com.example.sparkle.repositories.ProductRepository;
 import org.springframework.stereotype.Service;

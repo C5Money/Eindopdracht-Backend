@@ -1,7 +1,6 @@
 package com.example.sparkle.controllers;
 
 import com.example.sparkle.dtos.inputDto.ProductInputDto;
-import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
 import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.services.ProductService;
 import jakarta.validation.Valid;

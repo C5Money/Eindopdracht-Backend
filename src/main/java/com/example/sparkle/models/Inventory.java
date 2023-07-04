@@ -21,5 +21,5 @@ public class Inventory {
     private String description;
     private String sellStock;
     private String orderStock;
-//    private Product product;
+//    private List<Product> products;
 }
