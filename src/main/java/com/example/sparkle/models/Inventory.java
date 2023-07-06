@@ -1,13 +1,8 @@
 package com.example.sparkle.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,8 +13,10 @@ public class Inventory {
     @Id
     @GeneratedValue
     private Long id;
+    private String name;
     private String description;
-    private String sellStock;
-    private String orderStock;
+    private Integer quantity;
+
+//    @OneToMany(mappedBy = "inventory_item")
 //    private List<Product> products;
 }

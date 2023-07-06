@@ -85,7 +85,7 @@ public class ProductService {
         productEntity.setId(productInputDto.id);
         productEntity.setProductName(productInputDto.productName);
         productEntity.setArticleNumber(productInputDto.articleNumber);
-        productEntity.setPrice(productInputDto.price);
+        productEntity.setUnitPrice(productInputDto.unitPrice);
         productEntity.setAvailableStock(productInputDto.availableStock);
         productEntity.setCategory(productInputDto.category);
         return productEntity;
@@ -101,8 +101,8 @@ public class ProductService {
         if(productInputDto.articleNumber != null){
             productEntity.setArticleNumber(productInputDto.articleNumber);
         }
-        if(productInputDto.price != null){
-            productEntity.setPrice(productInputDto.price);
+        if(productInputDto.unitPrice != null){
+            productEntity.setUnitPrice(productInputDto.unitPrice);
         }
         if(productInputDto.availableStock != null){
             productEntity.setAvailableStock(productInputDto.availableStock);
@@ -119,7 +119,7 @@ public class ProductService {
         ProductOutputDto productOutputDto = new ProductOutputDto();
         productOutputDto.id = product.getId();
         productOutputDto.productName = product.getProductName();
-        productOutputDto.price = product.getPrice();
+        productOutputDto.unitPrice = product.getUnitPrice();
         productOutputDto.availableStock = product.getAvailableStock();
         return productOutputDto;
     }

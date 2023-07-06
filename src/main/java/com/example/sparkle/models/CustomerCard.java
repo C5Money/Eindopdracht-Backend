@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 @Getter
@@ -20,4 +21,11 @@ public class CustomerCard {
     private String cardNumber;
     private BigDecimal amountSpend;
     private CardStatus cardStatus;
+
+//    @OneToOne()
+//    @JoinColumn(name = "users", nullable = false)
+//    private User user;
+//
+//    @OneToMany(mappedBy = "products")
+//    private List<Product> products;
 }

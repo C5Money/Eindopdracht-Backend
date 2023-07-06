@@ -20,7 +20,7 @@ public class ProductInputDto {
     public String articleNumber;
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", message = "Price must be a positive number")
-    public BigDecimal price;
+    public BigDecimal unitPrice;
 
     @NotNull(message = "Available stock is required")
     @DecimalMin(value = "0.0", message = "Available stock must be a positive number")

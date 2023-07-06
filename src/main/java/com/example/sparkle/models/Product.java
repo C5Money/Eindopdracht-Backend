@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 public class Product {
 //    Instance Variables
     @Id
@@ -17,7 +17,15 @@ public class Product {
     private Long id;
     private String productName;
     private String articleNumber;
-    private BigDecimal price;
+    private BigDecimal unitPrice;
     private Double availableStock;
     private String category;
+
+//    @ManyToOne
+//    @JoinColumn(name = "inventory_item_id")
+//    private InventoryItem inventoryItem;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "customer_card_id")
+//    private CustomerCard customerCard;
 }

@@ -12,14 +12,14 @@ public class InventoryInputDto {
 //    Instance Variables
     public Long id;
 
+    @NotBlank(message = "Name is required")
+    public String name;
+
     @NotBlank(message = "Description is required")
     @Size(max = 255, message = "Description cannot exceed 255 characters")
     public String description;
 
-    @NotNull(message = "Sellstock is required")
-    public String sellStock;
-
-    @NotNull(message = "Available stock is required")
-    public String orderStock;
+    @NotNull(message = "quantity is required")
+    public Integer quantity;
 //    private List<Product> products;
 }
