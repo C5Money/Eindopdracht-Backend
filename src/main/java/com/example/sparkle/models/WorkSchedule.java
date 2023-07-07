@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @Setter
 @Entity
 @Table(name = "work_calendar")
-public class WorkCalendar {
+public class WorkSchedule {
 //    Instance Variables
     @Id
     @GeneratedValue
@@ -19,5 +19,4 @@ public class WorkCalendar {
     private LocalDate endDate;
     private LocalTime beginTime;
     private LocalTime endTime;
-
 }

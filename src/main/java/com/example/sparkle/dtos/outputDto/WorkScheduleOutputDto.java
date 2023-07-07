@@ -4,7 +4,7 @@ package com.example.sparkle.dtos.outputDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class WorkCalendarOutputDto {
+public class WorkScheduleOutputDto {
 //    DTO Variables
     public Long id;
     public LocalDate startDate;

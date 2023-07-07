@@ -123,7 +123,4 @@ public class ProductService {
         productOutputDto.availableStock = product.getAvailableStock();
         return productOutputDto;
     }
-
-
-
 }
