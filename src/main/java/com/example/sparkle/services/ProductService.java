@@ -101,12 +101,12 @@ public class ProductService {
         if(productInputDto.articleNumber != null){
             productEntity.setArticleNumber(productInputDto.articleNumber);
         }
-        if(productInputDto.unitPrice != null){
-            productEntity.setUnitPrice(productInputDto.unitPrice);
-        }
-        if(productInputDto.availableStock != null){
-            productEntity.setAvailableStock(productInputDto.availableStock);
-        }
+//        if(productInputDto.unitPrice != null){
+//            productEntity.setUnitPrice(productInputDto.unitPrice);
+//        }
+//        if(productInputDto.availableStock != null){
+//            productEntity.setAvailableStock(productInputDto.availableStock);
+//        }
         if(productInputDto.category != null){
             productEntity.setCategory(productInputDto.category);
         }

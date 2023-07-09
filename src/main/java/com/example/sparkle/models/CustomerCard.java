@@ -22,10 +22,11 @@ public class CustomerCard {
     private BigDecimal amountSpend;
     private CardStatus cardStatus;
 
-//    @OneToOne()
-//    @JoinColumn(name = "users", nullable = false)
-//    private User user;
-//
-//    @OneToMany(mappedBy = "products")
-//    private List<Product> products;
+//    Relations
+    @OneToMany(mappedBy = "customerCard")
+    private List<User> users;
+
+    @OneToMany(mappedBy = "customerCard")
+    private List<Product> products;
+
 }

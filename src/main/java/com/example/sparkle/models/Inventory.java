@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
-@Table(name = "inventory")
+@Table(name = "inventories")
 public class Inventory {
 //    Instance Variables
     @Id
@@ -17,6 +19,7 @@ public class Inventory {
     private String description;
     private Integer quantity;
 
-//    @OneToMany(mappedBy = "inventory_item")
-//    private List<Product> products;
+//    Relations
+    @OneToMany(mappedBy = "inventoryItem")
+    private List<Product> products;
 }

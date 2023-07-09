@@ -1,9 +1,6 @@
 package com.example.sparkle.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,5 +21,11 @@ public class User {
     private String phoneNumber;
     private String email;
 
+//    Relations
+    @ManyToOne
+    private CustomerCard customerCard;
 
+    @ManyToOne
+    @JoinColumn(name = "work_schedule")
+    private WorkSchedule workSchedule;
 }

@@ -21,11 +21,15 @@ public class Product {
     private Double availableStock;
     private String category;
 
-//    @ManyToOne
-//    @JoinColumn(name = "inventory_item_id")
-//    private InventoryItem inventoryItem;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "customer_card_id")
-//    private CustomerCard customerCard;
+
+//    Relations
+    @ManyToOne
+    @JoinColumn(name = "customerCard", nullable = false)
+    private CustomerCard customerCard;
+
+    @ManyToOne
+    @JoinColumn(name = "inventory_item")
+    private Inventory inventoryItem;
+
+
 }
