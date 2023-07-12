@@ -3,7 +3,11 @@ package com.example.sparkle.services;
 import com.example.sparkle.dtos.inputDto.ProductInputDto;
 import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
+import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.models.Inventory;
 import com.example.sparkle.models.Product;
+import com.example.sparkle.repositories.CustomerCardRepository;
+import com.example.sparkle.repositories.InventoryRepository;
 import com.example.sparkle.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +19,13 @@ import java.util.Optional;
 public class ProductService {
 //    Instance Variables
     private final ProductRepository productRepository;
+    private final CustomerCardRepository customerCardRepository;
+//    private final InventoryRepository inventoryRepository;
 //    Constructor
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CustomerCardRepository customerCardRepository) {
         this.productRepository = productRepository;
+        this.customerCardRepository = customerCardRepository;
+//        this.inventoryRepository = inventoryRepository;
     }
 //    CRUD:
 //    ----------------------------------------------------------------------
@@ -25,8 +33,23 @@ public class ProductService {
 //    ----------------------------------------------------------------------
     public Long createProduct(ProductInputDto productInputDto){
         Product newProductEntity = inputDtoToEntity(productInputDto);
+
+        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(productInputDto.customerCardId);
+        if(optionalCustomerCard.isEmpty()){
+            throw new ResourceNotFoundException("id is invalid or doesn't exist.");
+        } else {
+            newProductEntity.setCustomerCard(optionalCustomerCard.get());
+        }
+
+//        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
+//        if( optionalInventoryItem.isEmpty() ){
+//            throw new ResourceNotFoundException("This inventory item is invalid or doesn't exist.");
+//        } else {
+//            newProductEntity.setInventoryItem(optionalInventoryItem.get());
+//        }
+
         productRepository.save(newProductEntity);
-        return newProductEntity.getId();
+        return newProductEntity.getCustomerCard().getId();
     }
 //    ----------------------------------------------------------------------
 //    Read
@@ -82,7 +105,7 @@ public class ProductService {
 //    ----------------------------------------------------------------------
     public Product inputDtoToEntity(ProductInputDto productInputDto){
         Product productEntity = new Product();
-        productEntity.setId(productInputDto.id);
+
         productEntity.setProductName(productInputDto.productName);
         productEntity.setArticleNumber(productInputDto.articleNumber);
         productEntity.setUnitPrice(productInputDto.unitPrice);
@@ -110,6 +133,9 @@ public class ProductService {
         if(productInputDto.category != null){
             productEntity.setCategory(productInputDto.category);
         }
+//        if(productInputDto.customerCardId != null){
+//            productEntity.setCustomerCard(productInputDto.customerCardId.);
+//        }
         return productEntity;
     }
 //    ----------------------------------------------------------------------
@@ -121,6 +147,7 @@ public class ProductService {
         productOutputDto.productName = product.getProductName();
         productOutputDto.unitPrice = product.getUnitPrice();
         productOutputDto.availableStock = product.getAvailableStock();
+        productOutputDto.customerCard = product.getCustomerCard();
         return productOutputDto;
     }
 }

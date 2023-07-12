@@ -1,5 +1,6 @@
 package com.example.sparkle.dtos.outputDto;
 
+import com.example.sparkle.models.CustomerCard;
 
 import java.math.BigDecimal;
 
@@ -9,5 +10,8 @@ public class ProductOutputDto {
     public String productName;
     public BigDecimal unitPrice;
     public Double availableStock;
+
+//    Relaties
+    public CustomerCard customerCard;
 
 }

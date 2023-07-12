@@ -6,6 +6,7 @@ public class InventoryOutputDto {
     public String name;
     public String description;
     public Integer quantity;
-//    private List<Product> products;
+
+
 
 }

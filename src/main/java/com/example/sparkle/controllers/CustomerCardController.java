@@ -2,6 +2,7 @@ package com.example.sparkle.controllers;
 
 import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
+import com.example.sparkle.models.CardStatus;
 import com.example.sparkle.services.CustomerCardService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/customercards")
+@RequestMapping("/customercard")
 public class CustomerCardController {
 //    Instance Variables
     private final CustomerCardService cardService;
@@ -42,14 +43,20 @@ public class CustomerCardController {
         Long newCardDto = cardService.createCustomerCard(cardInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newCardDto ).toUriString());
         cardInputDto.id = newCardDto;
-        return ResponseEntity.created(uri).body(cardInputDto);
+        return ResponseEntity.created(uri).body("Customercard with cardnumber: " + cardInputDto.cardNumber + " is succesfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
-    @GetMapping("/{id}")
-    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCard(@PathVariable Long id){
-        CustomerCardOutputDto cardOutputDto = cardService.readOneCustomerCard(id);
+    @GetMapping("/{cardNumber}")
+    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCardByCardNumber(@PathVariable String cardNumber){
+        CustomerCardOutputDto cardOutputDto = cardService.readOneCustomerCardByCardNumber(cardNumber);
+        return ResponseEntity.ok().body(cardOutputDto);
+    }
+
+    @GetMapping("/status/{cardStatus}")
+    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCardByCardStatus(@PathVariable CardStatus cardStatus){
+        CustomerCardOutputDto cardOutputDto = cardService.readAllCustomerCardsByCardStatus(cardStatus);
         return ResponseEntity.ok().body(cardOutputDto);
     }
 

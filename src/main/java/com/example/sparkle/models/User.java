@@ -1,5 +1,6 @@
 package com.example.sparkle.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,10 +23,11 @@ public class User {
     private String email;
 
 //    Relations
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private CustomerCard customerCard;
 
-    @ManyToOne
-    @JoinColumn(name = "work_schedule")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "work_schedule_id")
     private WorkSchedule workSchedule;
 }

@@ -1,5 +1,6 @@
 package com.example.sparkle.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,13 +24,17 @@ public class Product {
 
 
 //    Relations
-    @ManyToOne
-    @JoinColumn(name = "customerCard", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JoinColumn(name = "customerCard_id", nullable = false)
     private CustomerCard customerCard;
 
-    @ManyToOne
-    @JoinColumn(name = "inventory_item")
-    private Inventory inventoryItem;
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    @JoinColumn(name = "inventory_item")
+//    private Inventory inventoryItem;
+//
+
 
 
 }

@@ -20,6 +20,6 @@ public class Inventory {
     private Integer quantity;
 
 //    Relations
-    @OneToMany(mappedBy = "inventoryItem")
-    private List<Product> products;
+//    @OneToMany(mappedBy = "inventoryItem")
+//    private List<Product> products;
 }

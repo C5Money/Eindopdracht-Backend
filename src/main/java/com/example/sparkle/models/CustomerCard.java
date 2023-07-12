@@ -1,5 +1,6 @@
 package com.example.sparkle.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.Getter;
@@ -16,17 +17,23 @@ import java.util.List;
 public class CustomerCard {
 //    Instance Variables
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String cardNumber;
-    private BigDecimal amountSpend;
+    private double amountSpend;
     private CardStatus cardStatus;
+
 
 //    Relations
     @OneToMany(mappedBy = "customerCard")
-    private List<User> users;
-
-    @OneToMany(mappedBy = "customerCard")
+    @JsonIgnore
     private List<Product> products;
+
+//    @OneToMany(mappedBy = "customerCard")
+//    private List<User> users;
+
+
+//    Instance Methods
+
 
 }

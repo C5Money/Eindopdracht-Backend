@@ -21,5 +21,5 @@ public class InventoryInputDto {
 
     @NotNull(message = "quantity is required")
     public Integer quantity;
-//    private List<Product> products;
+
 }

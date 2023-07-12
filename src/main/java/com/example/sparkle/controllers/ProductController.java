@@ -41,7 +41,7 @@ public class ProductController {
         Long newProductDto = productService.createProduct(productInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newProductDto ).toUriString());
         productInputDto.id = newProductDto;
-        return ResponseEntity.created(uri).body(productInputDto);
+        return ResponseEntity.created(uri).body(productInputDto.id);
     }
 //    ----------------------------------------------------------------------
 //    Get
@@ -52,8 +52,8 @@ public class ProductController {
         return ResponseEntity.ok().body(productOutputDto);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<ProductOutputDto> readOneProductByName(@RequestParam String productname){
+    @GetMapping("/search/{productname}")
+    public ResponseEntity<ProductOutputDto> readOneProductByName(@PathVariable String productname){
         ProductOutputDto productOutputDto = productService.readOneProductName(productname);
         return ResponseEntity.ok().body(productOutputDto);
     }
