@@ -11,6 +11,7 @@ public class CustomerCardOutputDto {
 //    DTO Variables
     public Long id;
     public String cardNumber;
+    public Double amountSpend;
     public CardStatus cardStatus;
 
 //    Relaties

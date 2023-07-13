@@ -11,5 +11,8 @@ public interface CustomerCardRepository extends JpaRepository<CustomerCard, Long
 
     Optional<CustomerCard> findCustomerCardByCardNumber(String cardNumber);
     Optional<CustomerCard> findAllByCardStatus(CardStatus cardStatus);
+    Optional<CustomerCard> findByCardNumber(String cardNumber);
+    Boolean existsByCardNumber(String cardNumber);
+
 
 }

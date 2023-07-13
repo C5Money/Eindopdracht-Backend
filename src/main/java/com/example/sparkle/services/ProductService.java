@@ -32,14 +32,13 @@ public class ProductService {
 //    Create
 //    ----------------------------------------------------------------------
     public Long createProduct(ProductInputDto productInputDto){
-        Product newProductEntity = inputDtoToEntity(productInputDto);
-
-        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(productInputDto.customerCardId);
-        if(optionalCustomerCard.isEmpty()){
-            throw new ResourceNotFoundException("id is invalid or doesn't exist.");
-        } else {
-            newProductEntity.setCustomerCard(optionalCustomerCard.get());
+        Optional<Product> optionalProduct = productRepository.findProductByArticleNumber(productInputDto.articleNumber);
+        if(optionalProduct.isPresent()){
+            throw new ResourceNotFoundException("Product articlenumber: " + productInputDto.articleNumber + " already exists.");
         }
+        Product newProductEntity = inputDtoToEntity(productInputDto);
+        productRepository.save(newProductEntity);
+        return newProductEntity.getCustomerCard().getId();
 
 //        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
 //        if( optionalInventoryItem.isEmpty() ){
@@ -47,9 +46,6 @@ public class ProductService {
 //        } else {
 //            newProductEntity.setInventoryItem(optionalInventoryItem.get());
 //        }
-
-        productRepository.save(newProductEntity);
-        return newProductEntity.getCustomerCard().getId();
     }
 //    ----------------------------------------------------------------------
 //    Read
@@ -84,6 +80,7 @@ public class ProductService {
 //    ----------------------------------------------------------------------
     public ProductOutputDto updateOneProduct(ProductInputDto productInputDto, Long id){
         Product optionalProduct = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("This id: " + id + " does not exist."));
+
         Product updatedProduct = updateInputDtoToEntity(productInputDto, optionalProduct);
         productRepository.save(updatedProduct);
         return entityToOutputDto(updatedProduct);
@@ -93,7 +90,7 @@ public class ProductService {
 //    ----------------------------------------------------------------------
     public void deleteOneProductId(Long id){
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if(optionalProduct.isEmpty() || id <= 0){
+        if(optionalProduct.isEmpty() ){
             throw new ResourceNotFoundException("This product: " + id + " is already deleted or doesn't exist.");
         }
         productRepository.deleteById(id);
@@ -147,7 +144,6 @@ public class ProductService {
         productOutputDto.productName = product.getProductName();
         productOutputDto.unitPrice = product.getUnitPrice();
         productOutputDto.availableStock = product.getAvailableStock();
-        productOutputDto.customerCard = product.getCustomerCard();
         return productOutputDto;
     }
 }

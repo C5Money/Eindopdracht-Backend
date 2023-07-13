@@ -68,9 +68,9 @@ public class CustomerCardController {
 //    ----------------------------------------------------------------------
 //    Put
 //    ----------------------------------------------------------------------
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerCardOutputDto> updateOneCustomerCard(@RequestBody CustomerCardInputDto cardInputDto, @PathVariable Long id){
-        CustomerCardOutputDto cardOutputDto = cardService.updateOneCustomerCard(cardInputDto, id);
+    @PutMapping("/{cardNumber}")
+    public ResponseEntity<CustomerCardOutputDto> updateOneCustomerCard(@RequestBody CustomerCardInputDto cardInputDto, @PathVariable String cardNumber){
+        CustomerCardOutputDto cardOutputDto = cardService.updateOneCustomerCard(cardInputDto, cardNumber);
         return ResponseEntity.accepted().body(cardOutputDto);
     }
 //    ----------------------------------------------------------------------
@@ -78,7 +78,7 @@ public class CustomerCardController {
 //    ----------------------------------------------------------------------
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteOneCustomerCard(@PathVariable Long id){
-        cardService.deleteOneCustomerCard(id);
+        cardService.deleteOneCustomerCardById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -41,7 +41,7 @@ public class ProductController {
         Long newProductDto = productService.createProduct(productInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newProductDto ).toUriString());
         productInputDto.id = newProductDto;
-        return ResponseEntity.created(uri).body(productInputDto.id);
+        return ResponseEntity.created(uri).body("Product with productnumber: " + productInputDto.id + " is succesfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get

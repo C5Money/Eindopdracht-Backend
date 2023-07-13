@@ -12,6 +12,6 @@ public class ProductOutputDto {
     public Double availableStock;
 
 //    Relaties
-    public CustomerCard customerCard;
+//    public CustomerCard customerCard;
 
 }

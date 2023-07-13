@@ -10,7 +10,7 @@ public class CustomerCardInputDto {
     public Long id;
 
     @NotBlank(message = "Cardnumber is required")
-    @Size(max = 15, message = "Cardnumber cannot exceed 15 characters")
+    @Size(max = 8, message = "Cardnumber cannot exceed 8 characters")
     public String cardNumber;
 
     @NotNull( message = "The amopunt spend is required.")

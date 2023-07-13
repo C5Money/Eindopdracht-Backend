@@ -34,6 +34,7 @@ public class ProductInputDto {
     public String category;
 
 //    Relaties
+
     public Long customerCardId;
 //    public Long inventoryItemId;
 
