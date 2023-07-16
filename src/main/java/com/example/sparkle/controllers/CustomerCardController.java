@@ -55,9 +55,9 @@ public class CustomerCardController {
     }
 
     @GetMapping("/status/{cardStatus}")
-    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCardByCardStatus(@PathVariable CardStatus cardStatus){
-        CustomerCardOutputDto cardOutputDto = cardService.readAllCustomerCardsByCardStatus(cardStatus);
-        return ResponseEntity.ok().body(cardOutputDto);
+    public ResponseEntity<List<CustomerCardOutputDto>> readOneCustomerCardByCardStatus(@PathVariable CardStatus cardStatus){
+        List<CustomerCardOutputDto> cardDtoList = cardService.readAllCustomerCardsByCardStatus(cardStatus);
+        return ResponseEntity.ok().body(cardDtoList);
     }
 
     @GetMapping
@@ -69,7 +69,16 @@ public class CustomerCardController {
 //    Put
 //    ----------------------------------------------------------------------
     @PutMapping("/{cardNumber}")
-    public ResponseEntity<CustomerCardOutputDto> updateOneCustomerCard(@RequestBody CustomerCardInputDto cardInputDto, @PathVariable String cardNumber){
+    public ResponseEntity<Object> updateOneCustomerCard(@Valid @RequestBody CustomerCardInputDto cardInputDto, @PathVariable String cardNumber, BindingResult bindingResult){
+        if(bindingResult.hasFieldErrors()){
+            StringBuilder stringBuilder = new StringBuilder();
+            for(FieldError fieldError : bindingResult.getFieldErrors()){
+                stringBuilder.append(fieldError.getField() + ": ");
+                stringBuilder.append(fieldError.getDefaultMessage());
+                stringBuilder.append("\n");
+            }
+            return ResponseEntity.badRequest().body(stringBuilder.toString());
+        }
         CustomerCardOutputDto cardOutputDto = cardService.updateOneCustomerCard(cardInputDto, cardNumber);
         return ResponseEntity.accepted().body(cardOutputDto);
     }

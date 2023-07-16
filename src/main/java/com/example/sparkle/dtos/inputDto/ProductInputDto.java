@@ -5,12 +5,11 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
 
-import java.math.BigDecimal;
-@Getter
-@Setter
+//@Getter
+//@Setter
+@AllArgsConstructor
 public class ProductInputDto {
 //    DTO Variables
     public Long id;
@@ -19,11 +18,11 @@ public class ProductInputDto {
     @Size(max = 50, message = "Product name cannot exceed 50 characters")
     public String productName;
 
+    @NotNull(message = "Product article number is required")
     public String articleNumber;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.0", message = "Price must be a positive number")
-    public BigDecimal unitPrice;
+
+    public Double unitPrice;
 
     @NotNull(message = "Available stock is required")
     @DecimalMin(value = "0.0", message = "Available stock must be a positive number")

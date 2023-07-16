@@ -1,18 +1,13 @@
 package com.example.sparkle.services;
 
 import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
-import com.example.sparkle.dtos.inputDto.InventoryInputDto;
 import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
-import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.models.CardStatus;
 import com.example.sparkle.models.CustomerCard;
-import com.example.sparkle.models.Inventory;
-import com.example.sparkle.models.WorkSchedule;
 import com.example.sparkle.repositories.CustomerCardRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,12 +44,16 @@ private final CustomerCardRepository customerCardRepository;
         return entityToOutputDto(optionalCustomerCard.get());
     }
 
-    public CustomerCardOutputDto readAllCustomerCardsByCardStatus(CardStatus cardStatus){
-        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findAllByCardStatus(cardStatus);
-        if(optionalCustomerCard.isEmpty()){
+    public List<CustomerCardOutputDto> readAllCustomerCardsByCardStatus(CardStatus cardStatus) {
+        List<CustomerCard> cardStatusList = customerCardRepository.findAllByCardStatus(cardStatus);
+        List<CustomerCardOutputDto> customerCardOutputDtoList = new ArrayList<>();
+        if(cardStatusList.isEmpty()){
             throw new ResourceNotFoundException("There are no customercards found with " + cardStatus + " level.");
         }
-        return entityToOutputDto(optionalCustomerCard.get());
+        for(CustomerCard customerCardEntity : cardStatusList){
+            customerCardOutputDtoList.add(entityToOutputDto(customerCardEntity));
+        }
+        return customerCardOutputDtoList;
     }
 
     public List<CustomerCardOutputDto> readAllCustomerCards(){
@@ -73,14 +72,14 @@ private final CustomerCardRepository customerCardRepository;
 //    ----------------------------------------------------------------------
     public CustomerCardOutputDto updateOneCustomerCard(CustomerCardInputDto cardInputDto, String cardNumber) {
         Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findCustomerCardByCardNumber(cardNumber);
-        if (optionalCustomerCard.isPresent() ) {
+        if(optionalCustomerCard.isPresent() ) {
             CustomerCard updatableCustomerCard = optionalCustomerCard.get();
             CustomerCard updatedCustomerCard = updateInputDtoToEntity(cardInputDto, updatableCustomerCard);
 
             customerCardRepository.save(updatedCustomerCard);
             return entityToOutputDto(updatedCustomerCard);
         } else {
-            throw new ResourceNotFoundException("Customercard with cardnumber: " + cardInputDto.cardNumber + " did not update");
+            throw new ResourceNotFoundException("Customercard with cardnumber: " + cardInputDto.cardNumber + " did not update.");
         }
     }
 //    ----------------------------------------------------------------------
@@ -89,9 +88,10 @@ private final CustomerCardRepository customerCardRepository;
     public void deleteOneCustomerCardById(Long id){
         Optional<CustomerCard> optionalCustomerCard =customerCardRepository.findById(id);
         if(optionalCustomerCard.isEmpty()){
-            throw new ResourceNotFoundException("This product: " + id + " is already deleted or doesn't exist.");
+            throw new ResourceNotFoundException("This customercard with id: " + id + " is already deleted or doesn't exist.");
         }
-        customerCardRepository.deleteById(id);
+        CustomerCard foundCustomerCard = optionalCustomerCard.get();
+        customerCardRepository.delete(foundCustomerCard);
     }
 
 //    MAPPERS:
@@ -99,7 +99,6 @@ private final CustomerCardRepository customerCardRepository;
 //    InputDto to Entity
 //    ----------------------------------------------------------------------
     public CustomerCard inputDtoToEntity(CustomerCardInputDto cardInputDto){
-
         CustomerCard cardEntity = new CustomerCard();
         if(cardInputDto.id != null){
             cardEntity.setId(cardInputDto.id);

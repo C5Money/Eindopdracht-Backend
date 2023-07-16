@@ -8,7 +8,7 @@ public class ProductOutputDto {
     //    DTO Variables
     public Long id;
     public String productName;
-    public BigDecimal unitPrice;
+    public Double unitPrice;
     public Double availableStock;
 
 //    Relaties

@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 public class Product {
 //    Instance Variables
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String productName;
     private String articleNumber;
-    private BigDecimal unitPrice;
+    private Double unitPrice;
     private Double availableStock;
     private String category;
 

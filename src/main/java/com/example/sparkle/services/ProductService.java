@@ -1,13 +1,12 @@
 package com.example.sparkle.services;
 
+import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.inputDto.ProductInputDto;
 import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.models.CustomerCard;
-import com.example.sparkle.models.Inventory;
 import com.example.sparkle.models.Product;
 import com.example.sparkle.repositories.CustomerCardRepository;
-import com.example.sparkle.repositories.InventoryRepository;
 import com.example.sparkle.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +30,20 @@ public class ProductService {
 //    ----------------------------------------------------------------------
 //    Create
 //    ----------------------------------------------------------------------
-    public Long createProduct(ProductInputDto productInputDto){
-        Optional<Product> optionalProduct = productRepository.findProductByArticleNumber(productInputDto.articleNumber);
+    public Long createProductLinkedToCustomerCard(ProductInputDto productInputDto){
+        Optional<Product> optionalProduct = productRepository.findByArticleNumberContainingIgnoreCase(productInputDto.articleNumber);
         if(optionalProduct.isPresent()){
-            throw new ResourceNotFoundException("Product articlenumber: " + productInputDto.articleNumber + " already exists.");
+            throw new ResourceNotFoundException("Product article number: " + productInputDto.articleNumber + " already exists.");
         }
         Product newProductEntity = inputDtoToEntity(productInputDto);
+
+        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(productInputDto.customerCardId);
+        if(optionalCustomerCard.isEmpty()){
+            throw new ResourceNotFoundException("Customercard id: " + productInputDto.customerCardId + " doesn't exist or is invalid.");
+        } else {
+            newProductEntity.setCustomerCard(optionalCustomerCard.get());
+        }
+
         productRepository.save(newProductEntity);
         return newProductEntity.getCustomerCard().getId();
 
@@ -47,20 +54,29 @@ public class ProductService {
 //            newProductEntity.setInventoryItem(optionalInventoryItem.get());
 //        }
     }
+
 //    ----------------------------------------------------------------------
 //    Read
 //    ----------------------------------------------------------------------
     public ProductOutputDto readOneProductId(Long id){
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if(optionalProduct.isEmpty() || id <= 0){
-            throw new ResourceNotFoundException("This id: " + id + " is invalid or doesn't exist.");
+        if(optionalProduct.isEmpty()){
+            throw new ResourceNotFoundException("Product id: " + id + " is invalid or doesn't exist.");
         }
         return entityToOutputDto(optionalProduct.get());
     }
 
-    public ProductOutputDto readOneProductName(String productName){
-        Product foundProduct = productRepository.findByProductNameContainingIgnoreCase(productName).orElseThrow(()-> new ResourceNotFoundException("Product not found."));
+    public ProductOutputDto readOneProductName(String productname){
+        Product foundProduct = productRepository.findByProductNameContainingIgnoreCase(productname).orElseThrow(()-> new ResourceNotFoundException("Product not found."));
         return entityToOutputDto(foundProduct);
+    }
+
+    public ProductOutputDto readOneProductByArticleNumber(String articlenumber){
+        Optional<Product> optionalProduct = productRepository.findByArticleNumberContainingIgnoreCase(articlenumber);
+        if(optionalProduct.isEmpty()){
+            throw new ResourceNotFoundException("Product article number: " + articlenumber + " is invalid or doesn't exist.");
+        }
+        return entityToOutputDto(optionalProduct.get());
     }
 
     public List<ProductOutputDto> readAllProducts(){
@@ -78,23 +94,32 @@ public class ProductService {
 //    ----------------------------------------------------------------------
 //    Update
 //    ----------------------------------------------------------------------
-    public ProductOutputDto updateOneProduct(ProductInputDto productInputDto, Long id){
-        Product optionalProduct = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("This id: " + id + " does not exist."));
+    public ProductOutputDto updateOneProduct(Long id, ProductInputDto productInputDto ){
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if(optionalProduct.isPresent() ){
+            Product updatableProduct = optionalProduct.get();
+            Product updatedProduct = updateInputDtoToEntity(productInputDto, updatableProduct);
 
-        Product updatedProduct = updateInputDtoToEntity(productInputDto, optionalProduct);
-        productRepository.save(updatedProduct);
-        return entityToOutputDto(updatedProduct);
+            productRepository.save(updatedProduct);
+            return entityToOutputDto(updatedProduct);
+        } else {
+            throw new ResourceNotFoundException("Product with id number: " + productInputDto.id + " did not update.");
+        }
     }
+
+
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
     public void deleteOneProductId(Long id){
         Optional<Product> optionalProduct = productRepository.findById(id);
         if(optionalProduct.isEmpty() ){
-            throw new ResourceNotFoundException("This product: " + id + " is already deleted or doesn't exist.");
+            throw new ResourceNotFoundException("This product with id: " + id + " is already deleted or doesn't exist.");
         }
-        productRepository.deleteById(id);
+        Product foundProduct = optionalProduct.get();
+        productRepository.delete(foundProduct);
     }
+
 
 //    MAPPERS:
 //    ----------------------------------------------------------------------
@@ -102,12 +127,30 @@ public class ProductService {
 //    ----------------------------------------------------------------------
     public Product inputDtoToEntity(ProductInputDto productInputDto){
         Product productEntity = new Product();
+        if(productInputDto.productName != null){
+            productEntity.setProductName(productInputDto.productName);
+        }
 
-        productEntity.setProductName(productInputDto.productName);
-        productEntity.setArticleNumber(productInputDto.articleNumber);
-        productEntity.setUnitPrice(productInputDto.unitPrice);
-        productEntity.setAvailableStock(productInputDto.availableStock);
-        productEntity.setCategory(productInputDto.category);
+        if(productInputDto.articleNumber != null){
+            productEntity.setArticleNumber(productInputDto.articleNumber);
+        }
+
+        if(productInputDto.unitPrice != null) {
+            productEntity.setUnitPrice(productInputDto.unitPrice);
+        }
+
+        if(productInputDto.availableStock != null) {
+            productEntity.setAvailableStock(productInputDto.availableStock);
+        }
+
+        if(productInputDto.category != null){
+            productEntity.setCategory(productInputDto.category);
+        }
+
+//        if(productInputDto.customerCardId != null){
+//            productEntity.setCustomerCard(productEntity.getCustomerCard());
+//        }
+
         return productEntity;
     }
 
@@ -115,24 +158,31 @@ public class ProductService {
         if(productInputDto.id != null){
             productEntity.setId(productInputDto.id);
         }
+
         if(productInputDto.productName != null){
             productEntity.setProductName(productInputDto.productName);
         }
+
         if(productInputDto.articleNumber != null){
             productEntity.setArticleNumber(productInputDto.articleNumber);
         }
-//        if(productInputDto.unitPrice != null){
-//            productEntity.setUnitPrice(productInputDto.unitPrice);
-//        }
-//        if(productInputDto.availableStock != null){
-//            productEntity.setAvailableStock(productInputDto.availableStock);
-//        }
+
+        if(productInputDto.unitPrice != null) {
+            productEntity.setUnitPrice(productInputDto.unitPrice);
+        }
+
+        if(productInputDto.availableStock != null) {
+            productEntity.setAvailableStock(productInputDto.availableStock);
+        }
+
         if(productInputDto.category != null){
             productEntity.setCategory(productInputDto.category);
         }
-//        if(productInputDto.customerCardId != null){
-//            productEntity.setCustomerCard(productInputDto.customerCardId.);
+
+//        if(productInputDto. != null){
+//            productEntity.setCustomerCard(productInputDto.customerCardId);
 //        }
+
         return productEntity;
     }
 //    ----------------------------------------------------------------------
