@@ -5,19 +5,17 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Entity
 @Table(name = "products")
 public class Product {
 //    Instance Variables
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long articleNumber;
+
     private String productName;
-    private String articleNumber;
     private Double unitPrice;
     private Double availableStock;
     private String category;
@@ -29,12 +27,9 @@ public class Product {
     @JoinColumn(name = "customerCard_id", nullable = false)
     private CustomerCard customerCard;
 
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    @JoinColumn(name = "inventory_item")
-//    private Inventory inventoryItem;
-//
-
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JoinColumn(name = "inventory_item_id")
+    private Inventory inventoryItem;
 
 }

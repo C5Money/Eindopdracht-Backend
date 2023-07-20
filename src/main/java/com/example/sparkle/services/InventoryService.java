@@ -19,7 +19,7 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
 
 //    Constructor
-    public InventoryService(InventoryRepository inventoryRepository, ProductRepository productRepository) {
+    public InventoryService(InventoryRepository inventoryRepository) {
         this.inventoryRepository = inventoryRepository;
     }
 
@@ -28,17 +28,22 @@ public class InventoryService {
 //    Create
 //    ----------------------------------------------------------------------
     public Long createInventoryItem(InventoryInputDto inventoryItemInputDto) {
-        Inventory newInventoryEntity = inputDtoToEntity(inventoryItemInputDto);
-        inventoryRepository.save(newInventoryEntity);
-        return newInventoryEntity.getId();
+//        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(inventoryItemInputDto.id);
+//        if(optionalInventoryItem.isPresent()){
+//            throw new ResourceNotFoundException("Inventory item already exist.");
+//        }
+
+        Inventory newInventoryItem = inputDtoToEntity(inventoryItemInputDto);
+        inventoryRepository.save(newInventoryItem);
+        return newInventoryItem.getId();
     }
 //    ----------------------------------------------------------------------
 //    Read
 //    ----------------------------------------------------------------------
     public InventoryOutputDto readOneInventoryItemId(Long id){
         Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(id);
-        if(optionalInventoryItem.isEmpty() || id <= 0){
-            throw new ResourceNotFoundException("This id: " + id + " is invalid or doesn't exist.");
+        if(optionalInventoryItem.isEmpty()){
+            throw new ResourceNotFoundException("This  id: " + id + " is invalid or doesn't exist.");
         }
         return entityToOutputDto(optionalInventoryItem.get());
     }
@@ -49,12 +54,12 @@ public class InventoryService {
     }
 
     public List<InventoryOutputDto> readAllInventoryItems(){
-        List<Inventory> optionalInventoryItemList = inventoryRepository.findAll();
+        List<Inventory> inventoryItemList = inventoryRepository.findAll();
         List<InventoryOutputDto> inventoryOutputDtoList = new ArrayList<>();
-        if(optionalInventoryItemList.isEmpty()){
-            throw new ResourceNotFoundException("Inventory items list not found.");
+        if(inventoryItemList.isEmpty()){
+            throw new ResourceNotFoundException("Inventory items not found.");
         } else {
-            for ( Inventory inventoryEntity : optionalInventoryItemList){
+            for ( Inventory inventoryEntity : inventoryItemList){
                 inventoryOutputDtoList.add(entityToOutputDto(inventoryEntity));
             }
         }
@@ -64,10 +69,16 @@ public class InventoryService {
 //    Update
 //    ----------------------------------------------------------------------
     public InventoryOutputDto updateOneInventoryItem(InventoryInputDto inventoryInputDto, Long id){
-        Inventory optionalInventoryItem = inventoryRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("This inventory item's id: " + id + " does not exist."));
-        Inventory updatedInventoryItem = updateInputDtoToEntity(inventoryInputDto, optionalInventoryItem);
-        inventoryRepository.save(updatedInventoryItem);
-        return entityToOutputDto(updatedInventoryItem);
+        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(id);
+        if(optionalInventoryItem.isPresent()){
+            Inventory updatableInventoryItem = optionalInventoryItem.get();
+            Inventory updatedInventoryItem = updateInputDtoToEntity(inventoryInputDto, updatableInventoryItem);
+
+            inventoryRepository.save(updatedInventoryItem);
+            return entityToOutputDto(updatedInventoryItem);
+        } else {
+            throw new ResourceNotFoundException("This inventory item's id: " + id + " does not exist.");
+        }
     }
 //    ----------------------------------------------------------------------
 //    Delete
@@ -77,7 +88,8 @@ public class InventoryService {
         if(optionalInventoryItem.isEmpty() || id <= 0){
             throw new ResourceNotFoundException("This inventory item's id: " + id + " is already deleted or doesn't exist.");
         }
-        inventoryRepository.deleteById(id);
+        Inventory foundInventoryItem = optionalInventoryItem.get();
+        inventoryRepository.delete(foundInventoryItem);
     }
 
 //    MAPPERS:
@@ -86,10 +98,24 @@ public class InventoryService {
 //    ----------------------------------------------------------------------
     public Inventory inputDtoToEntity(InventoryInputDto inventoryInputDto){
         Inventory inventoryEntity = new Inventory();
-        inventoryEntity.setName(inventoryInputDto.name);
-        inventoryEntity.setDescription(inventoryInputDto.description);
-        inventoryEntity.setQuantity(inventoryInputDto.quantity);
-//        inventoryEntity.setProducts(inventoryInputDto.products);
+        if(inventoryInputDto.id != null){
+            inventoryEntity.setId(inventoryInputDto.id);
+        }
+
+        if(inventoryInputDto.name != null){
+            inventoryEntity.setName(inventoryInputDto.name);
+//        } else {
+//            inventoryEntity.setName(inventoryEntity.getProducts().get(name));
+        }
+
+        if(inventoryInputDto.description != null){
+            inventoryEntity.setDescription(inventoryInputDto.description);
+        }
+
+        if(inventoryInputDto.quantity != null){
+            inventoryEntity.setQuantity(inventoryInputDto.quantity);
+        }
+
         return inventoryEntity;
     }
 

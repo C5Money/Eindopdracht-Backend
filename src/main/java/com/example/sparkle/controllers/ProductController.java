@@ -2,14 +2,12 @@ package com.example.sparkle.controllers;
 
 import com.example.sparkle.dtos.inputDto.ProductInputDto;
 import com.example.sparkle.dtos.outputDto.ProductOutputDto;
-import com.example.sparkle.models.Product;
 import com.example.sparkle.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,31 +38,40 @@ public class ProductController {
             }
             return ResponseEntity.badRequest().body(stringBuilder.toString());
         }
-        Long newProductDto = productService.createProductLinkedToCustomerCard(productInputDto);
+        Long newProductDto = productService.createProduct(productInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newProductDto ).toUriString());
-        productInputDto.id = newProductDto;
+        productInputDto.articleNumber = newProductDto;
         return ResponseEntity.created(uri).body("Product with article number: " + productInputDto.articleNumber + " is successfully created.");
     }
 
-
+//    @PostMapping("/inventorylink")
+//    public ResponseEntity<Object> createProductLinkedToInventory(@Valid @RequestBody ProductInputDto productInputDto, BindingResult bindingResult){
+//        if(bindingResult.hasFieldErrors()){
+//            StringBuilder stringBuilder = new StringBuilder();
+//            for(FieldError fieldError : bindingResult.getFieldErrors()){
+//                stringBuilder.append(fieldError.getField() + ": ");
+//                stringBuilder.append(fieldError.getDefaultMessage());
+//                stringBuilder.append("\n");
+//            }
+//            return ResponseEntity.badRequest().body(stringBuilder.toString());
+//        }
+//        Long newProductDto = productService.createProductLinkedToInventory(productInputDto);
+//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newProductDto ).toUriString());
+//        productInputDto.id = newProductDto;
+//        return ResponseEntity.created(uri).body("Product with article number: " + productInputDto.articleNumber + " is successfully created.");
+//    }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductOutputDto> readOneProductById(@PathVariable Long id){
-        ProductOutputDto productOutputDto = productService.readOneProductId(id);
+    @GetMapping("/{articleNumber}")
+    public ResponseEntity<ProductOutputDto> readOneProductByArticleNumber(@PathVariable Long articleNumber){
+        ProductOutputDto productOutputDto = productService.readOneProductByArticleNumber(articleNumber);
         return ResponseEntity.ok().body(productOutputDto);
     }
 
     @GetMapping("/productname/{productname}")
     public ResponseEntity<ProductOutputDto> readOneProductByName(@PathVariable String productname){
         ProductOutputDto productOutputDto = productService.readOneProductName(productname);
-        return ResponseEntity.ok().body(productOutputDto);
-    }
-
-    @GetMapping("/articlenumber/{articlenumber}")
-    public ResponseEntity<ProductOutputDto> readOneProductByArticleNumber(@PathVariable String articlenumber){
-        ProductOutputDto productOutputDto = productService.readOneProductByArticleNumber(articlenumber);
         return ResponseEntity.ok().body(productOutputDto);
     }
 
@@ -76,9 +83,9 @@ public class ProductController {
 //    ----------------------------------------------------------------------
 //    Put
 //    ----------------------------------------------------------------------
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> updateOneProduct(@Valid @PathVariable Long id, @RequestBody ProductInputDto productInputDto, BindingResult bindingResult){
-        ProductOutputDto productOutputDto = productService.updateOneProduct(id, productInputDto );
+    @PutMapping("/{articleNumber}")
+    public ResponseEntity<Object> updateOneProduct(@Valid @PathVariable Long articleNumber, @RequestBody ProductInputDto productInputDto, BindingResult bindingResult){
+        ProductOutputDto productOutputDto = productService.updateOneProduct(articleNumber, productInputDto );
         if(bindingResult.hasFieldErrors()){
             StringBuilder stringBuilder = new StringBuilder();
             for(FieldError fieldError : bindingResult.getFieldErrors()){
@@ -93,9 +100,9 @@ public class ProductController {
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteOneProductById(@PathVariable Long id){
-        productService.deleteOneProductId(id);
+    @DeleteMapping("/{articleNumber}")
+    public ResponseEntity<HttpStatus> deleteOneProductById(@PathVariable Long articleNumber){
+        productService.deleteOneProductId(articleNumber);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

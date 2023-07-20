@@ -42,14 +42,14 @@ public class CustomerCardController {
         }
         Long newCardDto = cardService.createCustomerCard(cardInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newCardDto ).toUriString());
-        cardInputDto.id = newCardDto;
-        return ResponseEntity.created(uri).body("Customercard with cardnumber: " + cardInputDto.cardNumber + " is succesfully created.");
+        cardInputDto.cardNumber = newCardDto;
+        return ResponseEntity.created(uri).body("Customercard with id: " + cardInputDto.cardNumber + " is succesfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
     @GetMapping("/{cardNumber}")
-    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCardByCardNumber(@PathVariable String cardNumber){
+    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCardByCardNumber(@PathVariable Long cardNumber){
         CustomerCardOutputDto cardOutputDto = cardService.readOneCustomerCardByCardNumber(cardNumber);
         return ResponseEntity.ok().body(cardOutputDto);
     }
@@ -69,25 +69,16 @@ public class CustomerCardController {
 //    Put
 //    ----------------------------------------------------------------------
     @PutMapping("/{cardNumber}")
-    public ResponseEntity<Object> updateOneCustomerCard(@Valid @RequestBody CustomerCardInputDto cardInputDto, @PathVariable String cardNumber, BindingResult bindingResult){
-        if(bindingResult.hasFieldErrors()){
-            StringBuilder stringBuilder = new StringBuilder();
-            for(FieldError fieldError : bindingResult.getFieldErrors()){
-                stringBuilder.append(fieldError.getField() + ": ");
-                stringBuilder.append(fieldError.getDefaultMessage());
-                stringBuilder.append("\n");
-            }
-            return ResponseEntity.badRequest().body(stringBuilder.toString());
-        }
+    public ResponseEntity<Object> updateCustomerCard(@RequestBody CustomerCardInputDto cardInputDto, @PathVariable Long cardNumber){
         CustomerCardOutputDto cardOutputDto = cardService.updateOneCustomerCard(cardInputDto, cardNumber);
         return ResponseEntity.accepted().body(cardOutputDto);
     }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteOneCustomerCard(@PathVariable Long id){
-        cardService.deleteOneCustomerCardById(id);
+    @DeleteMapping("/{cardNumber}")
+    public ResponseEntity<HttpStatus> deleteOneCustomerCard(@PathVariable Long cardNumber){
+        cardService.deleteOneCustomerCardById(cardNumber);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

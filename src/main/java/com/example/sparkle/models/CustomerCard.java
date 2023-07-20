@@ -1,12 +1,10 @@
 package com.example.sparkle.models;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -17,23 +15,18 @@ import java.util.List;
 public class CustomerCard {
 //    Instance Variables
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String cardNumber;
-    private double amountSpend;
-    private CardStatus cardStatus;
+    private Long cardNumber;
 
+    private Double amountSpend;
+    private CardStatus cardStatus;
 
 //    Relations
     @OneToMany(mappedBy = "customerCard")
     @JsonIgnore
     private List<Product> products;
 
+
 //    @OneToMany(mappedBy = "customerCard")
 //    private List<User> users;
-
-
-//    Instance Methods
-
 
 }

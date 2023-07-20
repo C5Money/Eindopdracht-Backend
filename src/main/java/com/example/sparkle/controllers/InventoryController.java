@@ -41,7 +41,7 @@ public class InventoryController {
         Long newInventoryDto = inventoryService.createInventoryItem(inventoryInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newInventoryDto ).toUriString());
         inventoryInputDto.id = newInventoryDto;
-        return ResponseEntity.created(uri).body(inventoryInputDto);
+        return ResponseEntity.created(uri).body("Inventory item with id: " + newInventoryDto + " is succesfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
@@ -52,8 +52,8 @@ public class InventoryController {
         return ResponseEntity.ok().body(inventoryOutputDto);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<InventoryOutputDto> readOneInventoryItemByName(@RequestParam String name){
+    @GetMapping("/inventoryname/{name}")
+    public ResponseEntity<InventoryOutputDto> readOneInventoryItemByName(@PathVariable String name){
         InventoryOutputDto inventoryOutputDto = inventoryService.readOneInventoryItemName(name);
         return ResponseEntity.ok().body(inventoryOutputDto);
     }
@@ -67,8 +67,17 @@ public class InventoryController {
 //    Put
 //    ----------------------------------------------------------------------
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryOutputDto> updateOneInventoryItem(@RequestBody InventoryInputDto inventoryInputDto, @PathVariable Long id){
+    public ResponseEntity<Object> updateOneInventoryItem(@Valid @RequestBody InventoryInputDto inventoryInputDto, @PathVariable Long id, BindingResult bindingResult){
         InventoryOutputDto inventoryOutputDto = inventoryService.updateOneInventoryItem(inventoryInputDto, id);
+        if(bindingResult.hasFieldErrors()){
+            StringBuilder stringBuilder = new StringBuilder();
+            for(FieldError fieldError : bindingResult.getFieldErrors()){
+                stringBuilder.append(fieldError.getField() + ": ");
+                stringBuilder.append(fieldError.getDefaultMessage());
+                stringBuilder.append("\n");
+            }
+            return ResponseEntity.badRequest().body(stringBuilder.toString());
+        }
         return ResponseEntity.accepted().body(inventoryOutputDto);
     }
 //    ----------------------------------------------------------------------

@@ -6,14 +6,12 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class CustomerCardInputDto {
-    //    DTO Variables
-    public Long id;
+//    DTO Variables
+    @NotNull(message = "Cardnumber is required")
+    public Long cardNumber;
 
-    @NotBlank(message = "Cardnumber is required")
-    @Size(max = 8, message = "Cardnumber cannot exceed 8 characters")
-    public String cardNumber;
-
-    @NotNull( message = "The amopunt spend is required.")
+    @NotNull( message = "The amount spend is required.")
+    @DecimalMin(value = "0.0", message = "Price must be a positive number")
     public Double amountSpend;
 
     public CardStatus cardStatus;

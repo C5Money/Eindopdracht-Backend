@@ -1,12 +1,13 @@
 package com.example.sparkle.services;
 
-import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.inputDto.ProductInputDto;
 import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.models.Inventory;
 import com.example.sparkle.models.Product;
 import com.example.sparkle.repositories.CustomerCardRepository;
+import com.example.sparkle.repositories.InventoryRepository;
 import com.example.sparkle.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -30,22 +31,19 @@ public class ProductService {
 //    ----------------------------------------------------------------------
 //    Create
 //    ----------------------------------------------------------------------
-    public Long createProductLinkedToCustomerCard(ProductInputDto productInputDto){
-        Optional<Product> optionalProduct = productRepository.findByArticleNumberContainingIgnoreCase(productInputDto.articleNumber);
+    public Long createProduct(ProductInputDto productInputDto){
+        Optional<Product> optionalProduct = productRepository.findById(productInputDto.articleNumber);
         if(optionalProduct.isPresent()){
-            throw new ResourceNotFoundException("Product article number: " + productInputDto.articleNumber + " already exists.");
+            throw new ResourceNotFoundException("Product id: " + productInputDto.articleNumber + " already exists.");
         }
         Product newProductEntity = inputDtoToEntity(productInputDto);
 
         Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(productInputDto.customerCardId);
         if(optionalCustomerCard.isEmpty()){
-            throw new ResourceNotFoundException("Customercard id: " + productInputDto.customerCardId + " doesn't exist or is invalid.");
+            throw new ResourceNotFoundException("Customercard number: " + productInputDto.customerCardId + " doesn't exist or is invalid.");
         } else {
             newProductEntity.setCustomerCard(optionalCustomerCard.get());
         }
-
-        productRepository.save(newProductEntity);
-        return newProductEntity.getCustomerCard().getId();
 
 //        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
 //        if( optionalInventoryItem.isEmpty() ){
@@ -53,15 +51,36 @@ public class ProductService {
 //        } else {
 //            newProductEntity.setInventoryItem(optionalInventoryItem.get());
 //        }
+
+        productRepository.save(newProductEntity);
+        return newProductEntity.getArticleNumber();
     }
+
+//    public Long createProductLinkedToInventory(ProductInputDto productInputDto){
+//        Optional<Product> optionalProduct = productRepository.findByArticleNumberContainingIgnoreCase(productInputDto.articleNumber);
+//        if(optionalProduct.isPresent()){
+//            throw new ResourceNotFoundException("Product article number: " + productInputDto.articleNumber + " already exists.");
+//        }
+//        Product newProductEntity = inputDtoToEntity(productInputDto);
+//
+//        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
+//        if( optionalInventoryItem.isEmpty() ){
+//            throw new ResourceNotFoundException("This inventory item is invalid or doesn't exist.");
+//        } else {
+//            newProductEntity.setInventoryItem(optionalInventoryItem.get());
+//        }
+//
+//        productRepository.save(newProductEntity);
+//        return newProductEntity.getCustomerCard().getId();
+//    }
 
 //    ----------------------------------------------------------------------
 //    Read
 //    ----------------------------------------------------------------------
-    public ProductOutputDto readOneProductId(Long id){
-        Optional<Product> optionalProduct = productRepository.findById(id);
+    public ProductOutputDto readOneProductByArticleNumber(Long articlenumber){
+        Optional<Product> optionalProduct = productRepository.findById(articlenumber);
         if(optionalProduct.isEmpty()){
-            throw new ResourceNotFoundException("Product id: " + id + " is invalid or doesn't exist.");
+            throw new ResourceNotFoundException("Product id: " + articlenumber + " is invalid or doesn't exist.");
         }
         return entityToOutputDto(optionalProduct.get());
     }
@@ -71,13 +90,7 @@ public class ProductService {
         return entityToOutputDto(foundProduct);
     }
 
-    public ProductOutputDto readOneProductByArticleNumber(String articlenumber){
-        Optional<Product> optionalProduct = productRepository.findByArticleNumberContainingIgnoreCase(articlenumber);
-        if(optionalProduct.isEmpty()){
-            throw new ResourceNotFoundException("Product article number: " + articlenumber + " is invalid or doesn't exist.");
-        }
-        return entityToOutputDto(optionalProduct.get());
-    }
+
 
     public List<ProductOutputDto> readAllProducts(){
         List<Product> optionalProductList = productRepository.findAll();
@@ -94,8 +107,8 @@ public class ProductService {
 //    ----------------------------------------------------------------------
 //    Update
 //    ----------------------------------------------------------------------
-    public ProductOutputDto updateOneProduct(Long id, ProductInputDto productInputDto ){
-        Optional<Product> optionalProduct = productRepository.findById(id);
+    public ProductOutputDto updateOneProduct(Long articleNumber, ProductInputDto productInputDto ){
+        Optional<Product> optionalProduct = productRepository.findById(articleNumber);
         if(optionalProduct.isPresent() ){
             Product updatableProduct = optionalProduct.get();
             Product updatedProduct = updateInputDtoToEntity(productInputDto, updatableProduct);
@@ -103,18 +116,16 @@ public class ProductService {
             productRepository.save(updatedProduct);
             return entityToOutputDto(updatedProduct);
         } else {
-            throw new ResourceNotFoundException("Product with id number: " + productInputDto.id + " did not update.");
+            throw new ResourceNotFoundException("Product with id: " + articleNumber + " did not update.");
         }
     }
-
-
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
-    public void deleteOneProductId(Long id){
-        Optional<Product> optionalProduct = productRepository.findById(id);
+    public void deleteOneProductId(Long articleNumber){
+        Optional<Product> optionalProduct = productRepository.findById(articleNumber);
         if(optionalProduct.isEmpty() ){
-            throw new ResourceNotFoundException("This product with id: " + id + " is already deleted or doesn't exist.");
+            throw new ResourceNotFoundException("This product with id: " + articleNumber + " is already deleted or doesn't exist.");
         }
         Product foundProduct = optionalProduct.get();
         productRepository.delete(foundProduct);
@@ -148,17 +159,13 @@ public class ProductService {
         }
 
 //        if(productInputDto.customerCardId != null){
-//            productEntity.setCustomerCard(productEntity.getCustomerCard());
+//            productEntity.se
 //        }
 
         return productEntity;
     }
 
     public Product updateInputDtoToEntity(ProductInputDto productInputDto, Product productEntity){
-        if(productInputDto.id != null){
-            productEntity.setId(productInputDto.id);
-        }
-
         if(productInputDto.productName != null){
             productEntity.setProductName(productInputDto.productName);
         }
@@ -190,8 +197,8 @@ public class ProductService {
 //    ----------------------------------------------------------------------
     public ProductOutputDto entityToOutputDto(Product product){
         ProductOutputDto productOutputDto = new ProductOutputDto();
-        productOutputDto.id = product.getId();
         productOutputDto.productName = product.getProductName();
+        productOutputDto.articleNumber = product.getArticleNumber();
         productOutputDto.unitPrice = product.getUnitPrice();
         productOutputDto.availableStock = product.getAvailableStock();
         return productOutputDto;

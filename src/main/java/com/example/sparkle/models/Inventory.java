@@ -1,5 +1,6 @@
 package com.example.sparkle.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,13 +14,16 @@ import java.util.List;
 public class Inventory {
 //    Instance Variables
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String description;
     private Integer quantity;
 
 //    Relations
-//    @OneToMany(mappedBy = "inventoryItem")
-//    private List<Product> products;
+    @OneToMany(mappedBy = "inventoryItem")
+    @JsonIgnore
+    private List<Product> products;
+
 }

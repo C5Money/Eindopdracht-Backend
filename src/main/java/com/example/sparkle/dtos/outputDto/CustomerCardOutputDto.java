@@ -9,11 +9,11 @@ import java.util.List;
 
 public class CustomerCardOutputDto {
 //    DTO Variables
-    public Long id;
-    public String cardNumber;
+    public Long cardNumber;
     public Double amountSpend;
     public CardStatus cardStatus;
 
+
 //    Relaties
-    public List<Product> productsBought = new ArrayList<>();
+    public List<Product> products = new ArrayList<>();
 }
