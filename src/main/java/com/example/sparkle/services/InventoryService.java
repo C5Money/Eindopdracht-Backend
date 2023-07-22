@@ -104,8 +104,6 @@ public class InventoryService {
 
         if(inventoryInputDto.name != null){
             inventoryEntity.setName(inventoryInputDto.name);
-//        } else {
-//            inventoryEntity.setName(inventoryEntity.getProducts().get(name));
         }
 
         if(inventoryInputDto.description != null){
@@ -143,6 +141,7 @@ public class InventoryService {
         inventoryOutputDto.name = inventoryItem.getName();
         inventoryOutputDto.description = inventoryItem.getDescription();
         inventoryOutputDto.quantity = inventoryItem.getQuantity();
+        inventoryOutputDto.products = inventoryItem.getProducts();
         return inventoryOutputDto;
     }
 

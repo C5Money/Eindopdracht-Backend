@@ -20,12 +20,12 @@ public class ProductService {
 //    Instance Variables
     private final ProductRepository productRepository;
     private final CustomerCardRepository customerCardRepository;
-//    private final InventoryRepository inventoryRepository;
+    private final InventoryRepository inventoryRepository;
 //    Constructor
-    public ProductService(ProductRepository productRepository, CustomerCardRepository customerCardRepository) {
+    public ProductService(ProductRepository productRepository, CustomerCardRepository customerCardRepository, InventoryRepository inventoryRepository) {
         this.productRepository = productRepository;
         this.customerCardRepository = customerCardRepository;
-//        this.inventoryRepository = inventoryRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 //    CRUD:
 //    ----------------------------------------------------------------------
@@ -45,12 +45,12 @@ public class ProductService {
             newProductEntity.setCustomerCard(optionalCustomerCard.get());
         }
 
-//        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
-//        if( optionalInventoryItem.isEmpty() ){
-//            throw new ResourceNotFoundException("This inventory item is invalid or doesn't exist.");
-//        } else {
-//            newProductEntity.setInventoryItem(optionalInventoryItem.get());
-//        }
+        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
+        if( optionalInventoryItem.isEmpty() ){
+            throw new ResourceNotFoundException("This inventory item is invalid or doesn't exist.");
+        } else {
+            newProductEntity.setInventoryItem(optionalInventoryItem.get());
+        }
 
         productRepository.save(newProductEntity);
         return newProductEntity.getArticleNumber();

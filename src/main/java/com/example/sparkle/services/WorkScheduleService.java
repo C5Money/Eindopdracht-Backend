@@ -94,8 +94,7 @@ public class WorkScheduleService {
         workScheduleEntity.setId(workScheduleInputDto.id);
         workScheduleEntity.setStartDate(workScheduleInputDto.startDate);
         workScheduleEntity.setEndDate(workScheduleInputDto.endDate);
-        workScheduleEntity.setBeginTime(workScheduleInputDto.beginTime);
-        workScheduleEntity.setEndTime(workScheduleInputDto.endTime);
+        workScheduleEntity.setHoursPerWeek(workScheduleInputDto.hoursPerWeek);
         return workScheduleEntity;
     }
 
@@ -109,12 +108,10 @@ public class WorkScheduleService {
         if(workScheduleInputDto.endDate != null){
             workScheduleEntity.setEndDate(workScheduleInputDto.endDate);
         }
-        if(workScheduleInputDto.beginTime != null){
-            workScheduleEntity.setBeginTime(workScheduleInputDto.beginTime);
+        if(workScheduleInputDto.hoursPerWeek != null){
+            workScheduleEntity.setHoursPerWeek(workScheduleInputDto.hoursPerWeek);
         }
-        if(workScheduleInputDto.endTime != null){
-            workScheduleEntity.setEndTime(workScheduleInputDto.endTime);
-        }
+
         return workScheduleEntity;
     }
 //    ----------------------------------------------------------------------
@@ -125,8 +122,7 @@ public class WorkScheduleService {
         workScheduleOutputDto.id = workSchedule.getId();
         workScheduleOutputDto.startDate = workSchedule.getStartDate();
         workScheduleOutputDto.endDate = workSchedule.getEndDate();
-        workScheduleOutputDto.beginTime = workSchedule.getBeginTime();
-        workScheduleOutputDto.endTime = workSchedule.getEndTime();
+        workScheduleOutputDto.hoursPerWeek = workSchedule.getHoursPerWeek();
         return workScheduleOutputDto;
     }
 }

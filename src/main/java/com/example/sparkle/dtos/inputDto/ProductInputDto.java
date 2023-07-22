@@ -30,6 +30,6 @@ public class ProductInputDto {
 
 //    Relaties
     public Long customerCardId;
-//    public Long inventoryItemId;
+    public Long inventoryItemId;
 
 }

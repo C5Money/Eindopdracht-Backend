@@ -1,13 +1,11 @@
 package com.example.sparkle.dtos.inputDto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-
-@Setter
+@AllArgsConstructor
 public class WorkScheduleInputDto {
 //    DTO Variables
     public Long id;
@@ -20,11 +18,6 @@ public class WorkScheduleInputDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     public LocalDate endDate;
 
-    @NotNull(message = "Begin time is required")
-    @DateTimeFormat(pattern = "HH:mm")
-    public LocalTime beginTime;
-
-    @NotNull(message = "End time is required")
-    @DateTimeFormat(pattern = "HH:mm")
-    public LocalTime endTime;
+    @NotNull(message = "hours per week is required")
+    public Integer hoursPerWeek;
 }

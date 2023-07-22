@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -17,10 +16,10 @@ public class WorkSchedule {
     @Id
     @GeneratedValue
     private Long id;
+
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalTime beginTime;
-    private LocalTime endTime;
+    private int hoursPerWeek;
 
 //    Relations
     @OneToMany(mappedBy = "workSchedule")

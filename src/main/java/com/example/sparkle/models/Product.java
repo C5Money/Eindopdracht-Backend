@@ -11,7 +11,6 @@ import lombok.Setter;
 @Table(name = "products")
 public class Product {
 //    Instance Variables
-
     @Id
     private Long articleNumber;
 

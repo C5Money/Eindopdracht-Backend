@@ -9,6 +9,5 @@ public class WorkScheduleOutputDto {
     public Long id;
     public LocalDate startDate;
     public LocalDate endDate;
-    public LocalTime beginTime;
-    public LocalTime endTime;
+    public  Integer hoursPerWeek;
 }
