@@ -25,6 +25,11 @@ public class WorkScheduleService {
 //    Create
 //    ----------------------------------------------------------------------
     public Long createWorkSchedule(WorkScheduleInputDto workScheduleInputDto){
+//        Optional<WorkSchedule> optionalWorkSchedule = workScheduleRepository.findById(workScheduleInputDto.id);
+//        if(optionalWorkSchedule.isPresent()){
+//            throw new ResourceNotFoundException("Workschedule " + workScheduleInputDto.id + " already exists.");
+//        }
+
         WorkSchedule newWorkScheduleEntity =  inputDtoToEntity(workScheduleInputDto);
         workScheduleRepository.save(newWorkScheduleEntity);
         return newWorkScheduleEntity.getId();
@@ -91,17 +96,27 @@ public class WorkScheduleService {
 //    ----------------------------------------------------------------------
     public WorkSchedule inputDtoToEntity(WorkScheduleInputDto workScheduleInputDto){
         WorkSchedule workScheduleEntity = new WorkSchedule();
-        workScheduleEntity.setId(workScheduleInputDto.id);
-        workScheduleEntity.setStartDate(workScheduleInputDto.startDate);
-        workScheduleEntity.setEndDate(workScheduleInputDto.endDate);
-        workScheduleEntity.setHoursPerWeek(workScheduleInputDto.hoursPerWeek);
+        if(workScheduleInputDto.id != null){
+            workScheduleEntity.setId(workScheduleInputDto.id);
+        }
+
+        if(workScheduleInputDto.startDate != null){
+            workScheduleEntity.setStartDate(workScheduleInputDto.startDate);
+        }
+        if(workScheduleInputDto.endDate != null){
+            workScheduleEntity.setEndDate(workScheduleInputDto.endDate);
+        }
+        if(workScheduleInputDto.hoursPerWeek != null){
+            workScheduleEntity.setHoursPerWeek(workScheduleInputDto.hoursPerWeek);
+        }
+
         return workScheduleEntity;
     }
 
     public WorkSchedule updateInputDtoToEntity(WorkScheduleInputDto workScheduleInputDto, WorkSchedule workScheduleEntity){
-        if(workScheduleInputDto.id != null){
-            workScheduleEntity.setId(workScheduleInputDto.id);
-        }
+//        if(workScheduleInputDto.id != null){
+//            workScheduleEntity.setId(workScheduleInputDto.id);
+//        }
         if(workScheduleInputDto.startDate != null){
             workScheduleEntity.setStartDate(workScheduleInputDto.startDate);
         }

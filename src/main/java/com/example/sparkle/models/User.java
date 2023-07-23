@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -13,22 +15,25 @@ public class User {
 //    Instance Variables
     @Id
     @GeneratedValue
+    private Long id;
 
-    private String firstName;
-    private String lastName;
+    private String userName;
     private String email;
     private String password;
 
+    private String firstName;
+    private String lastName;
     private String zipCode;
-    private String Address;
+    private String address;
     private String phoneNumber;
 
+
 //    Relations
-//    @ManyToOne(cascade = CascadeType.ALL)
+//    @OneToOne(cascade = CascadeType.ALL)
 //    @JsonIgnore
 //    private CustomerCard customerCard;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "work_schedule_id")
-    private WorkSchedule workSchedule;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<WorkSchedule> workSchedules;
 }

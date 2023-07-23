@@ -43,7 +43,7 @@ public class WorkScheduleController {
         Long newWorkScheduleDto = workScheduleService.createWorkSchedule(workScheduleInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newWorkScheduleDto ).toUriString());
         workScheduleInputDto.id = newWorkScheduleDto;
-        return ResponseEntity.created(uri).body(workScheduleInputDto);
+        return ResponseEntity.created(uri).body("Workschedule with id: " + newWorkScheduleDto + " is succesfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
@@ -54,8 +54,8 @@ public class WorkScheduleController {
         return ResponseEntity.ok().body(workScheduleOutputDto);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<WorkScheduleOutputDto>> readAllWorkSchedulesByDate(@RequestParam LocalDate date){
+    @GetMapping("/date/{date}")
+    public ResponseEntity<List<WorkScheduleOutputDto>> readAllWorkSchedulesByDate(@PathVariable LocalDate date){
         List<WorkScheduleOutputDto> workScheduleDtoList = workScheduleService.readAllWorkSchedulesByDate(date);
         return ResponseEntity.ok().body(workScheduleDtoList);
     }

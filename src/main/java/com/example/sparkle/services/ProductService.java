@@ -158,9 +158,9 @@ public class ProductService {
             productEntity.setCategory(productInputDto.category);
         }
 
-//        if(productInputDto.customerCardId != null){
-//            productEntity.se
-//        }
+//        productEntity.setInventoryItem(productEntity.getInventoryItem());
+//
+
 
         return productEntity;
     }

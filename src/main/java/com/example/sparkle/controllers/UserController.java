@@ -1,8 +1,8 @@
 package com.example.sparkle.controllers;
 
-import com.example.sparkle.dtos.inputDto.InventoryInputDto;
-import com.example.sparkle.dtos.outputDto.InventoryOutputDto;
-import com.example.sparkle.services.InventoryService;
+import com.example.sparkle.dtos.inputDto.UserInputDto;
+import com.example.sparkle.dtos.outputDto.UserOutputDto;
+import com.example.sparkle.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,20 +15,20 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/inventory")
-public class InventoryController {
+@RequestMapping("/user")
+public class UserController {
 //    Instance Variables
-    private final InventoryService inventoryService;
+    private final UserService userService;
 //    Constructor
-    public InventoryController(InventoryService inventoryService){
-        this.inventoryService = inventoryService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 //    MAPPINGS:
 //    ----------------------------------------------------------------------
 //    Post
 //    ----------------------------------------------------------------------
     @PostMapping
-    public ResponseEntity<Object> createInventoryItem(@Valid @RequestBody InventoryInputDto inventoryInputDto, BindingResult bindingResult){
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserInputDto userInputDto, BindingResult bindingResult){
         if(bindingResult.hasFieldErrors()){
             StringBuilder stringBuilder = new StringBuilder();
             for(FieldError fieldError : bindingResult.getFieldErrors()){
@@ -38,37 +38,31 @@ public class InventoryController {
             }
             return ResponseEntity.badRequest().body(stringBuilder.toString());
         }
-        Long newInventoryDto = inventoryService.createInventoryItem(inventoryInputDto);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newInventoryDto ).toUriString());
-        inventoryInputDto.id = newInventoryDto;
-        return ResponseEntity.created(uri).body("Inventory item with id: " + newInventoryDto + " is succesfully created.");
+        Long newUserDto = userService.createUser(userInputDto);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newUserDto ).toUriString());
+        userInputDto.userId = newUserDto;
+        return ResponseEntity.created(uri).body("User with user id: " + userInputDto.userId + " is succesfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
     @GetMapping("/{id}")
-    public ResponseEntity<InventoryOutputDto> readOneInventoryItemById(@PathVariable Long id){
-        InventoryOutputDto inventoryOutputDto = inventoryService.readOneInventoryItemId(id);
-        return ResponseEntity.ok().body(inventoryOutputDto);
-    }
-
-    @GetMapping("/inventoryname/{name}")
-    public ResponseEntity<InventoryOutputDto> readOneInventoryItemByName(@PathVariable String name){
-        InventoryOutputDto inventoryOutputDto = inventoryService.readOneInventoryItemName(name);
-        return ResponseEntity.ok().body(inventoryOutputDto);
+    public ResponseEntity<UserOutputDto> readOneUserById(@PathVariable Long id){
+        UserOutputDto userOutputDto = userService.readOneUserById(id);
+        return ResponseEntity.ok().body(userOutputDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<InventoryOutputDto>> readAllInventoryItems(){
-        List<InventoryOutputDto> inventoryDtoList = inventoryService.readAllInventoryItems();
-        return ResponseEntity.ok().body(inventoryDtoList);
+    public ResponseEntity<List<UserOutputDto>> readAllWorkSchedule(){
+        List<UserOutputDto> userDtoList = userService.readAllUsers();
+        return ResponseEntity.ok().body(userDtoList);
     }
 //    ----------------------------------------------------------------------
 //    Put
 //    ----------------------------------------------------------------------
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateOneInventoryItem(@Valid @RequestBody InventoryInputDto inventoryInputDto, @PathVariable Long id, BindingResult bindingResult){
-        InventoryOutputDto inventoryOutputDto = inventoryService.updateOneInventoryItem(inventoryInputDto, id);
+    public ResponseEntity<Object> updateUser(@Valid @PathVariable Long id, @RequestBody UserInputDto userInputDto, BindingResult bindingResult){
+        UserOutputDto userOutputDto = userService.updateOneUser(userInputDto, id);
         if(bindingResult.hasFieldErrors()){
             StringBuilder stringBuilder = new StringBuilder();
             for(FieldError fieldError : bindingResult.getFieldErrors()){
@@ -78,14 +72,15 @@ public class InventoryController {
             }
             return ResponseEntity.badRequest().body(stringBuilder.toString());
         }
-        return ResponseEntity.accepted().body(inventoryOutputDto);
+        return ResponseEntity.ok().body(userOutputDto);
     }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteOneInventoryItemById(@PathVariable Long id){
-        inventoryService.deleteOneInventoryItemId(id);
+    public ResponseEntity<HttpStatus> deleteOneUserById(@PathVariable Long id){
+        userService.deleteOneUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

@@ -7,7 +7,6 @@ public class ProductOutputDto {
     public Double unitPrice;
     public Double availableStock;
 
-//    Relaties
 
 
 }

@@ -85,7 +85,7 @@ public class InventoryService {
 //    ----------------------------------------------------------------------
     public void deleteOneInventoryItemId(Long id){
         Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(id);
-        if(optionalInventoryItem.isEmpty() || id <= 0){
+        if(optionalInventoryItem.isEmpty()){
             throw new ResourceNotFoundException("This inventory item's id: " + id + " is already deleted or doesn't exist.");
         }
         Inventory foundInventoryItem = optionalInventoryItem.get();

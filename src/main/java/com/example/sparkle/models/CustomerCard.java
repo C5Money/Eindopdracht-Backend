@@ -19,8 +19,8 @@ public class CustomerCard {
     private CardStatus cardStatus;
 
 //    Relations
-//    @OneToMany(mappedBy = "customerCard")
-//    private List<User> users;
+//    @OneToOne(mappedBy = "customerCard")
+//    private User user;
 
     @OneToMany(mappedBy = "customerCard")
     @JsonIgnore

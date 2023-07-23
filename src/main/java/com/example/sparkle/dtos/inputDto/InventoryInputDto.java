@@ -16,7 +16,7 @@ public class InventoryInputDto {
     public String name;
 
     @NotBlank(message = "Description is required")
-    @Size(max = 255, message = "Description cannot exceed 255 characters")
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     public String description;
 
     @NotNull(message = "quantity is required")
