@@ -62,7 +62,6 @@ public class UserController {
 //    ----------------------------------------------------------------------
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@Valid @PathVariable Long id, @RequestBody UserInputDto userInputDto, BindingResult bindingResult){
-        UserOutputDto userOutputDto = userService.updateOneUser(userInputDto, id);
         if(bindingResult.hasFieldErrors()){
             StringBuilder stringBuilder = new StringBuilder();
             for(FieldError fieldError : bindingResult.getFieldErrors()){
@@ -72,6 +71,13 @@ public class UserController {
             }
             return ResponseEntity.badRequest().body(stringBuilder.toString());
         }
+        UserOutputDto userOutputDto = userService.updateOneUser(userInputDto, id);
+        return ResponseEntity.ok().body(userOutputDto);
+    }
+
+    @PutMapping("/{id}/customercard/{cardNumber}")
+    public ResponseEntity<UserOutputDto> assignCustomerCardToUser(@PathVariable Long id, @PathVariable Long cardNumber){
+        UserOutputDto userOutputDto = userService.assignCustomerCardToUser(id, cardNumber);
         return ResponseEntity.ok().body(userOutputDto);
     }
 //    ----------------------------------------------------------------------

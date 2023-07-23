@@ -3,7 +3,9 @@ package com.example.sparkle.services;
 import com.example.sparkle.dtos.inputDto.UserInputDto;
 import com.example.sparkle.dtos.outputDto.UserOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
+import com.example.sparkle.models.CustomerCard;
 import com.example.sparkle.models.User;
+import com.example.sparkle.repositories.CustomerCardRepository;
 import com.example.sparkle.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,12 @@ import java.util.Optional;
 public class UserService {
 //    Instance Variables
     private final UserRepository userRepository;
+    private final CustomerCardRepository customerCardRepository;
 
 //    Constructor
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CustomerCardRepository customerCardRepository) {
         this.userRepository = userRepository;
+        this.customerCardRepository = customerCardRepository;
     }
 //    CRUD:
 //    ----------------------------------------------------------------------
@@ -70,6 +74,20 @@ public class UserService {
         } else {
             throw new ResourceNotFoundException("User-id: " + id + " does not exist.");
         }
+    }
+
+    public UserOutputDto assignCustomerCardToUser(Long id, Long cardNumber){
+        Optional<User> optionalUser = userRepository.findById(id);
+        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
+
+        if(optionalUser.isEmpty() && optionalCustomerCard.isEmpty()) {
+            throw new ResourceNotFoundException("User with id: " + id + " or customer card with cardnumber: " + cardNumber + " do not exist.");
+        }
+        User updatableUser = optionalUser.get();
+        CustomerCard updatableCustomerCard = optionalCustomerCard.get();
+        updatableUser.setCustomerCard(updatableCustomerCard);
+        User updatedUser = userRepository.save(updatableUser);
+        return entityToOutputDto(updatedUser);
     }
 //    ----------------------------------------------------------------------
 //    Delete
@@ -127,6 +145,7 @@ public class UserService {
         userOutputDto.zipCode = user.getZipCode();
         userOutputDto.address = user.getAddress();
         userOutputDto.phoneNumber = user.getPhoneNumber();
+        userOutputDto.customerCard = user.getCustomerCard();
         return userOutputDto;
     }
 

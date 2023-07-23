@@ -3,7 +3,9 @@ package com.example.sparkle.services;
 import com.example.sparkle.dtos.inputDto.WorkScheduleInputDto;
 import com.example.sparkle.dtos.outputDto.WorkScheduleOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
+import com.example.sparkle.models.User;
 import com.example.sparkle.models.WorkSchedule;
+import com.example.sparkle.repositories.UserRepository;
 import com.example.sparkle.repositories.WorkScheduleRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +18,12 @@ import java.util.Optional;
 public class WorkScheduleService {
 //    Instance Variables
     private final WorkScheduleRepository workScheduleRepository;
+//    private final UserRepository userRepository;
 //    Constructor
     public WorkScheduleService(WorkScheduleRepository workworkScheduleRepository){
         this.workScheduleRepository = workworkScheduleRepository;
+//        this.userRepository = userRepository;
+
     }
 //    CRUD:
 //    ----------------------------------------------------------------------
@@ -31,6 +36,9 @@ public class WorkScheduleService {
 //        }
 
         WorkSchedule newWorkScheduleEntity =  inputDtoToEntity(workScheduleInputDto);
+
+//        Optional<User> optionalUser = userRepository.findById(workScheduleInputDto.)
+
         workScheduleRepository.save(newWorkScheduleEntity);
         return newWorkScheduleEntity.getId();
     }

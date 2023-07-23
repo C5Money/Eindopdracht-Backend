@@ -19,8 +19,10 @@ public class CustomerCard {
     private CardStatus cardStatus;
 
 //    Relations
-//    @OneToOne(mappedBy = "customerCard")
-//    private User user;
+    @OneToOne(mappedBy = "customerCard")
+    @JoinColumn(nullable = false)
+    @JsonIgnore
+    private User user;
 
     @OneToMany(mappedBy = "customerCard")
     @JsonIgnore

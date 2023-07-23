@@ -23,7 +23,7 @@ public class Product {
 //    Relations
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
-    @JoinColumn(name = "customerCard_id", nullable = false)
+    @JoinColumn(name = "customerCard_id")
     private CustomerCard customerCard;
 
     @ManyToOne(cascade = CascadeType.ALL)

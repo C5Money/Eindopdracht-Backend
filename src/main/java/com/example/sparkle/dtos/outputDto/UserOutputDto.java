@@ -1,5 +1,8 @@
 package com.example.sparkle.dtos.outputDto;
 
+import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.models.User;
+
 public class UserOutputDto {
 //    DTO Variables
     public Long id;
@@ -11,4 +14,7 @@ public class UserOutputDto {
     public String zipCode;
     public String address;
     public String phoneNumber;
+
+    //    Relaties
+    public CustomerCard customerCard;
 }
