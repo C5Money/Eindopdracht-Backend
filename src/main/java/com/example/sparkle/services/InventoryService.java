@@ -4,9 +4,7 @@ import com.example.sparkle.dtos.inputDto.InventoryInputDto;
 import com.example.sparkle.dtos.outputDto.InventoryOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.models.Inventory;
-import com.example.sparkle.models.Product;
 import com.example.sparkle.repositories.InventoryRepository;
-import com.example.sparkle.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -22,8 +22,8 @@ public class WorkSchedule {
     private int hoursPerWeek;
 
 //    Relations
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+    private User user;
 }

@@ -1,14 +1,14 @@
 package com.example.sparkle.dtos.outputDto;
 
 import com.example.sparkle.models.CustomerCard;
-import com.example.sparkle.models.User;
+import com.example.sparkle.models.WorkSchedule;
+
+import java.util.List;
 
 public class UserOutputDto {
 //    DTO Variables
     public Long id;
     public String userName;
-    public String email;
-    public String password;
     public String firstName;
     public String lastName;
     public String zipCode;
@@ -17,4 +17,5 @@ public class UserOutputDto {
 
     //    Relaties
     public CustomerCard customerCard;
+    public List<WorkSchedule> workSchedules;
 }

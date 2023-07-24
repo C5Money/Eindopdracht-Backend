@@ -21,7 +21,6 @@ public class WorkScheduleInputDto {
     @NotNull(message = "hours per week is required")
     public Integer hoursPerWeek;
 
-//    Relaties
-//    public String userId;
+
 
 }

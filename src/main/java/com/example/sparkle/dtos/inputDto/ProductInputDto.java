@@ -25,8 +25,4 @@ public class ProductInputDto {
     @Size(max = 50, message = "Category cannot exceed 50 characters")
     public String category;
 
-//    Relaties
-    public Long customerCardId;
-    public Long inventoryItemId;
-
 }

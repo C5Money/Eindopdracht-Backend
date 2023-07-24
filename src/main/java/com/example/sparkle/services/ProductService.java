@@ -37,43 +37,9 @@ public class ProductService {
             throw new ResourceNotFoundException("Product id: " + productInputDto.articleNumber + " already exists.");
         }
         Product newProductEntity = inputDtoToEntity(productInputDto);
-
-        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(productInputDto.customerCardId);
-        if(optionalCustomerCard.isEmpty()){
-            throw new ResourceNotFoundException("Customercard number: " + productInputDto.customerCardId + " doesn't exist or is invalid.");
-        } else {
-            newProductEntity.setCustomerCard(optionalCustomerCard.get());
-        }
-
-        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
-        if( optionalInventoryItem.isEmpty() ){
-            throw new ResourceNotFoundException("This inventory item is invalid or doesn't exist.");
-        } else {
-            newProductEntity.setInventoryItem(optionalInventoryItem.get());
-        }
-
         productRepository.save(newProductEntity);
         return newProductEntity.getArticleNumber();
     }
-
-//    public Long createProductLinkedToInventory(ProductInputDto productInputDto){
-//        Optional<Product> optionalProduct = productRepository.findByArticleNumberContainingIgnoreCase(productInputDto.articleNumber);
-//        if(optionalProduct.isPresent()){
-//            throw new ResourceNotFoundException("Product article number: " + productInputDto.articleNumber + " already exists.");
-//        }
-//        Product newProductEntity = inputDtoToEntity(productInputDto);
-//
-//        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(productInputDto.inventoryItemId);
-//        if( optionalInventoryItem.isEmpty() ){
-//            throw new ResourceNotFoundException("This inventory item is invalid or doesn't exist.");
-//        } else {
-//            newProductEntity.setInventoryItem(optionalInventoryItem.get());
-//        }
-//
-//        productRepository.save(newProductEntity);
-//        return newProductEntity.getCustomerCard().getId();
-//    }
-
 //    ----------------------------------------------------------------------
 //    Read
 //    ----------------------------------------------------------------------
@@ -89,8 +55,6 @@ public class ProductService {
         Product foundProduct = productRepository.findByProductNameContainingIgnoreCase(productname).orElseThrow(()-> new ResourceNotFoundException("Product not found."));
         return entityToOutputDto(foundProduct);
     }
-
-
 
     public List<ProductOutputDto> readAllProducts(){
         List<Product> optionalProductList = productRepository.findAll();
@@ -119,6 +83,34 @@ public class ProductService {
             throw new ResourceNotFoundException("Product with id: " + articleNumber + " did not update.");
         }
     }
+
+    public String assignProductToInventoryItem(Long articleNumber, Long inventoryItemId){
+        Optional<Product> optionalProduct = productRepository.findById(articleNumber);
+        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(inventoryItemId);
+
+        if(optionalProduct.isEmpty() && optionalInventoryItem.isEmpty()){
+            throw new ResourceNotFoundException("Product with id: " + articleNumber + " or inventory item with id: " + inventoryItemId + " do not exist.");
+        }
+        Product updatableProduct = optionalProduct.get();
+        Inventory updatableInventoryItem = optionalInventoryItem.get();
+        updatableProduct.setInventoryItem(updatableInventoryItem);
+        Product updatedProduct = productRepository.save(updatableProduct);
+        return "Product with id: " + articleNumber + " has successfully been assigned to inventory item id: " + inventoryItemId + ".";
+    }
+
+    public String assignProductToCustomerCard(Long articleNumber, Long cardNumber){
+        Optional<Product> optionalProduct = productRepository.findById(articleNumber);
+        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
+
+        if(optionalProduct.isEmpty() && optionalCustomerCard.isEmpty()){
+            throw new ResourceNotFoundException("Product with id: " + articleNumber + " or cardnumber: " + cardNumber + " do not exist.");
+        }
+        Product updatableProduct = optionalProduct.get();
+        CustomerCard updatableCustomerCard = optionalCustomerCard.get();
+        updatableProduct.setCustomerCard(updatableCustomerCard);
+        Product updatedProduct = productRepository.save(updatableProduct);
+        return "Product with id: " + articleNumber + " has successfully been assigned to customercardnumber: " + cardNumber + ".";
+    }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
@@ -130,7 +122,6 @@ public class ProductService {
         Product foundProduct = optionalProduct.get();
         productRepository.delete(foundProduct);
     }
-
 
 //    MAPPERS:
 //    ----------------------------------------------------------------------
@@ -158,10 +149,6 @@ public class ProductService {
             productEntity.setCategory(productInputDto.category);
         }
 
-//        productEntity.setInventoryItem(productEntity.getInventoryItem());
-//
-
-
         return productEntity;
     }
 
@@ -186,10 +173,6 @@ public class ProductService {
             productEntity.setCategory(productInputDto.category);
         }
 
-//        if(productInputDto. != null){
-//            productEntity.setCustomerCard(productInputDto.customerCardId);
-//        }
-
         return productEntity;
     }
 //    ----------------------------------------------------------------------
@@ -201,6 +184,8 @@ public class ProductService {
         productOutputDto.articleNumber = product.getArticleNumber();
         productOutputDto.unitPrice = product.getUnitPrice();
         productOutputDto.availableStock = product.getAvailableStock();
+        productOutputDto.inventory = product.getInventoryItem();
+        productOutputDto.customerCard = product.getCustomerCard();
         return productOutputDto;
     }
 }

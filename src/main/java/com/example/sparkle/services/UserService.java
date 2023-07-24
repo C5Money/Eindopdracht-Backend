@@ -48,6 +48,11 @@ public class UserService {
         return entityToOutputDto(optionalUser.get());
     }
 
+    public UserOutputDto readOneUserByUserName(String userName){
+        User foundUser = userRepository.findByUserNameContainingIgnoreCase(userName).orElseThrow(()-> new ResourceNotFoundException("User not found."));
+        return entityToOutputDto(foundUser);
+    }
+
     public List<UserOutputDto> readAllUsers(){
         List<User> userList = userRepository.findAll();
         List<UserOutputDto> userOutputDtoList = new ArrayList<>();
@@ -138,14 +143,13 @@ public class UserService {
         UserOutputDto userOutputDto = new UserOutputDto();
         userOutputDto.id = user.getId();
         userOutputDto.userName = user.getUserName();
-        userOutputDto.email = user.getEmail();
-        userOutputDto.password = user.getPassword();
         userOutputDto.firstName = user.getFirstName();
         userOutputDto.lastName = user.getLastName();
         userOutputDto.zipCode = user.getZipCode();
         userOutputDto.address = user.getAddress();
         userOutputDto.phoneNumber = user.getPhoneNumber();
         userOutputDto.customerCard = user.getCustomerCard();
+        userOutputDto.workSchedules = user.getWorkSchedules();
         return userOutputDto;
     }
 

@@ -1,6 +1,6 @@
 package com.example.sparkle.models;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private CustomerCard customerCard;
 
-//    @OneToMany(mappedBy = "user")
-//    @JsonIgnore
-//    private List<WorkSchedule> workSchedules;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<WorkSchedule> workSchedules;
 }

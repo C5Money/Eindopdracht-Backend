@@ -18,12 +18,11 @@ import java.util.Optional;
 public class WorkScheduleService {
 //    Instance Variables
     private final WorkScheduleRepository workScheduleRepository;
-//    private final UserRepository userRepository;
+    private final UserRepository userRepository;
 //    Constructor
-    public WorkScheduleService(WorkScheduleRepository workworkScheduleRepository){
+    public WorkScheduleService(WorkScheduleRepository workworkScheduleRepository, UserRepository userRepository){
         this.workScheduleRepository = workworkScheduleRepository;
-//        this.userRepository = userRepository;
-
+        this.userRepository = userRepository;
     }
 //    CRUD:
 //    ----------------------------------------------------------------------
@@ -87,12 +86,26 @@ public class WorkScheduleService {
         workScheduleRepository.save(updatedWorkSchedule);
         return entityToOutputDto(updatedWorkSchedule);
     }
+
+    public String assignUserToWorkSchedules(Long id, Long userId){
+        Optional<WorkSchedule> optionalWorkSchedule = workScheduleRepository.findById(id);
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if(optionalWorkSchedule.isEmpty() && optionalUser.isEmpty()){
+            throw new ResourceNotFoundException("User with id: " + userId + " or workschedule with id: " + id + " do not exist.");
+        }
+        WorkSchedule updatableWorkSchedule = optionalWorkSchedule.get();
+        User updatableUser = optionalUser.get();
+        updatableWorkSchedule.setUser(updatableUser);
+        WorkSchedule updatedWorkschedule = workScheduleRepository.save(updatableWorkSchedule);
+        return "Workschedule with id: " + id + " has succesfully been assigned to user-id:" + userId + ".";
+    }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
     public void deleteOneWorkScheduleId(Long id){
         Optional<WorkSchedule> optionalWorkSchedule = workScheduleRepository.findById(id);
-        if(optionalWorkSchedule.isEmpty() || id <= 0){
+        if(optionalWorkSchedule.isEmpty()){
             throw new ResourceNotFoundException("This product: " + id + " is already deleted or doesn't exist.");
         }
         workScheduleRepository.deleteById(id);
@@ -146,6 +159,7 @@ public class WorkScheduleService {
         workScheduleOutputDto.startDate = workSchedule.getStartDate();
         workScheduleOutputDto.endDate = workSchedule.getEndDate();
         workScheduleOutputDto.hoursPerWeek = workSchedule.getHoursPerWeek();
+        workScheduleOutputDto.user = workSchedule.getUser();
         return workScheduleOutputDto;
     }
 }
