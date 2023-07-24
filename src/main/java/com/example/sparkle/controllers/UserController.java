@@ -52,6 +52,12 @@ public class UserController {
         return ResponseEntity.ok().body(userOutputDto);
     }
 
+    @GetMapping("/name/{userName}")
+    public ResponseEntity<UserOutputDto> readOneUserByUserName(@PathVariable String userName){
+        UserOutputDto userOutputDto = userService.readOneUserByUserName(userName);
+        return ResponseEntity.ok().body(userOutputDto);
+    }
+
     @GetMapping
     public ResponseEntity<List<UserOutputDto>> readAllWorkSchedules(){
         List<UserOutputDto> userDtoList = userService.readAllUsers();

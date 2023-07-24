@@ -25,5 +25,4 @@ public class Inventory {
     @OneToMany(mappedBy = "inventoryItem")
     @JsonIgnore
     private List<Product> products;
-
 }

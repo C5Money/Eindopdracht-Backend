@@ -1,6 +1,9 @@
 package com.example.sparkle.dtos.outputDto;
 
 import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.models.WorkSchedule;
+
+import java.util.List;
 
 public class UserOutputDto {
 //    DTO Variables
@@ -14,4 +17,5 @@ public class UserOutputDto {
 
     //    Relaties
     public CustomerCard customerCard;
+    public List<WorkSchedule> workSchedules;
 }

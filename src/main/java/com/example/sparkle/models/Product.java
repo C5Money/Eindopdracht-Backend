@@ -19,7 +19,6 @@ public class Product {
     private Double availableStock;
     private String category;
 
-
 //    Relations
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
@@ -30,5 +29,4 @@ public class Product {
     @JsonIgnore
     @JoinColumn(name = "inventory_item_id")
     private Inventory inventoryItem;
-
 }

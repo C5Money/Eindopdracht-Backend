@@ -28,7 +28,7 @@ public class ProductController {
 //    Post
 //    ----------------------------------------------------------------------
     @PostMapping
-    public ResponseEntity<Object> createProductLinkedToCustomerCard(@Valid @RequestBody ProductInputDto productInputDto, BindingResult bindingResult){
+    public ResponseEntity<Object> createProduct(@Valid @RequestBody ProductInputDto productInputDto, BindingResult bindingResult){
         if(bindingResult.hasFieldErrors()){
             StringBuilder stringBuilder = new StringBuilder();
             for(FieldError fieldError : bindingResult.getFieldErrors()){
@@ -41,25 +41,8 @@ public class ProductController {
         Long newProductDto = productService.createProduct(productInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newProductDto ).toUriString());
         productInputDto.articleNumber = newProductDto;
-        return ResponseEntity.created(uri).body("Product with article number: " + productInputDto.articleNumber + " is successfully created.");
+        return ResponseEntity.created(uri).body("Product id: " + productInputDto.articleNumber + " is successfully created.");
     }
-
-//    @PostMapping("/inventorylink")
-//    public ResponseEntity<Object> createProductLinkedToInventory(@Valid @RequestBody ProductInputDto productInputDto, BindingResult bindingResult){
-//        if(bindingResult.hasFieldErrors()){
-//            StringBuilder stringBuilder = new StringBuilder();
-//            for(FieldError fieldError : bindingResult.getFieldErrors()){
-//                stringBuilder.append(fieldError.getField() + ": ");
-//                stringBuilder.append(fieldError.getDefaultMessage());
-//                stringBuilder.append("\n");
-//            }
-//            return ResponseEntity.badRequest().body(stringBuilder.toString());
-//        }
-//        Long newProductDto = productService.createProductLinkedToInventory(productInputDto);
-//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newProductDto ).toUriString());
-//        productInputDto.id = newProductDto;
-//        return ResponseEntity.created(uri).body("Product with article number: " + productInputDto.articleNumber + " is successfully created.");
-//    }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
@@ -97,6 +80,18 @@ public class ProductController {
         }
         return ResponseEntity.ok().body(productOutputDto);
     }
+
+    @PutMapping("/{articleNumber}/inventory/{inventoryId}")
+    public ResponseEntity<String> assignProductToInventoryItem(@PathVariable Long articleNumber, @PathVariable Long inventoryId){
+        String assignedProduct = productService.assignProductToInventoryItem(articleNumber, inventoryId);
+        return ResponseEntity.ok().body(assignedProduct);
+    }
+
+    @PutMapping("/{articleNumber}/cardnumber/{cardnumber}")
+    public ResponseEntity<String> assignProductToCustomerCard(@PathVariable Long articleNumber, @PathVariable Long cardnumber){
+        String assignedProduct = productService.assignProductToCustomerCard(articleNumber, cardnumber);
+        return ResponseEntity.ok().body(assignedProduct);
+    }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
@@ -106,7 +101,3 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
-
-
-
-

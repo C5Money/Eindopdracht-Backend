@@ -2,7 +2,6 @@ package com.example.sparkle.controllers;
 
 import com.example.sparkle.dtos.inputDto.WorkScheduleInputDto;
 import com.example.sparkle.dtos.outputDto.WorkScheduleOutputDto;
-import com.example.sparkle.services.UserService;
 import com.example.sparkle.services.WorkScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
