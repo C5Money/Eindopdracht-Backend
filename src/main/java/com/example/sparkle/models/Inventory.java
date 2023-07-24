@@ -1,30 +1,29 @@
 package com.example.sparkle.models;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "customer_cards")
-public class CustomerCard {
+@Table(name = "inventories")
+public class Inventory {
 //    Instance Variables
     @Id
-    private Long cardNumber;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private Double amountSpend;
-    private CardStatus cardStatus;
+    private String name;
+    private String description;
+    private Integer quantity;
 
 //    Relations
-    @OneToOne(mappedBy = "customerCard")
-    @JoinColumn(nullable = false)
-    @JsonIgnore
-    private User user;
-
-    @OneToMany(mappedBy = "customerCard")
+    @OneToMany(mappedBy = "inventoryItem")
     @JsonIgnore
     private List<Product> products;
+
 }

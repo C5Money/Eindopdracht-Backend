@@ -2,6 +2,7 @@ package com.example.sparkle.controllers;
 
 import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
+import com.example.sparkle.models.CardStatus;
 import com.example.sparkle.services.CustomerCardService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,10 +14,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
+
 
 @RestController
-@RequestMapping("/customercards")
+@RequestMapping("/customercard")
 public class CustomerCardController {
 //    Instance Variables
     private final CustomerCardService cardService;
@@ -41,16 +42,22 @@ public class CustomerCardController {
         }
         Long newCardDto = cardService.createCustomerCard(cardInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newCardDto ).toUriString());
-        cardInputDto.id = newCardDto;
-        return ResponseEntity.created(uri).body(cardInputDto);
+        cardInputDto.cardNumber = newCardDto;
+        return ResponseEntity.created(uri).body("Customercard with id: " + cardInputDto.cardNumber + " is succesfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
-    @GetMapping("/{id}")
-    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCard(@PathVariable Long id){
-        CustomerCardOutputDto cardOutputDto = cardService.readOneCustomerCard(id);
+    @GetMapping("/{cardNumber}")
+    public ResponseEntity<CustomerCardOutputDto> readOneCustomerCardByCardNumber(@PathVariable Long cardNumber){
+        CustomerCardOutputDto cardOutputDto = cardService.readOneCustomerCardByCardNumber(cardNumber);
         return ResponseEntity.ok().body(cardOutputDto);
+    }
+
+    @GetMapping("/status/{cardStatus}")
+    public ResponseEntity<List<CustomerCardOutputDto>> readOneCustomerCardByCardStatus(@PathVariable CardStatus cardStatus){
+        List<CustomerCardOutputDto> cardDtoList = cardService.readAllCustomerCardsByCardStatus(cardStatus);
+        return ResponseEntity.ok().body(cardDtoList);
     }
 
     @GetMapping
@@ -61,17 +68,17 @@ public class CustomerCardController {
 //    ----------------------------------------------------------------------
 //    Put
 //    ----------------------------------------------------------------------
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerCardOutputDto> updateOneCustomerCard(@RequestBody CustomerCardInputDto cardInputDto, @PathVariable Long id){
-        CustomerCardOutputDto cardOutputDto = cardService.updateOneCustomerCard(cardInputDto, id);
+    @PutMapping("/{cardNumber}")
+    public ResponseEntity<Object> updateCustomerCard(@RequestBody CustomerCardInputDto cardInputDto, @PathVariable Long cardNumber){
+        CustomerCardOutputDto cardOutputDto = cardService.updateOneCustomerCard(cardInputDto, cardNumber);
         return ResponseEntity.accepted().body(cardOutputDto);
     }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteOneCustomerCard(@PathVariable Long id){
-        cardService.deleteOneCustomerCard(id);
+    @DeleteMapping("/{cardNumber}")
+    public ResponseEntity<HttpStatus> deleteOneCustomerCard(@PathVariable Long cardNumber){
+        cardService.deleteOneCustomerCardById(cardNumber);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
