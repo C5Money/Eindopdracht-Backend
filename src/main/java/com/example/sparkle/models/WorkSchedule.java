@@ -1,6 +1,5 @@
 package com.example.sparkle.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,8 +21,7 @@ public class WorkSchedule {
     private int hoursPerWeek;
 
 //    Relations
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

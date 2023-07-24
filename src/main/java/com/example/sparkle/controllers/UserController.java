@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserOutputDto>> readAllWorkSchedule(){
+    public ResponseEntity<List<UserOutputDto>> readAllWorkSchedules(){
         List<UserOutputDto> userDtoList = userService.readAllUsers();
         return ResponseEntity.ok().body(userDtoList);
     }

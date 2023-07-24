@@ -2,6 +2,7 @@ package com.example.sparkle.controllers;
 
 import com.example.sparkle.dtos.inputDto.WorkScheduleInputDto;
 import com.example.sparkle.dtos.outputDto.WorkScheduleOutputDto;
+import com.example.sparkle.services.UserService;
 import com.example.sparkle.services.WorkScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -21,9 +21,11 @@ import java.util.List;
 public class WorkScheduleController {
 //    Instance Variables
     private final WorkScheduleService workScheduleService;
+
 //    Constructor
     public WorkScheduleController(WorkScheduleService workScheduleService){
         this.workScheduleService = workScheduleService;
+
     }
 //    MAPPINGS:
 //    ----------------------------------------------------------------------
@@ -69,9 +71,24 @@ public class WorkScheduleController {
 //    Put
 //    ----------------------------------------------------------------------
     @PutMapping("/{id}")
-    public ResponseEntity<WorkScheduleOutputDto> updateOneWorkSchedule(@RequestBody WorkScheduleInputDto workScheduleInputDto, @PathVariable Long id){
+    public ResponseEntity<Object> updateOneWorkSchedule(@Valid @RequestBody WorkScheduleInputDto workScheduleInputDto, @PathVariable Long id, BindingResult bindingResult){
+        if(bindingResult.hasFieldErrors()){
+            StringBuilder stringBuilder = new StringBuilder();
+            for(FieldError fieldError : bindingResult.getFieldErrors()){
+                stringBuilder.append(fieldError.getField() + ": ");
+                stringBuilder.append(fieldError.getDefaultMessage());
+                stringBuilder.append("\n");
+            }
+            return ResponseEntity.badRequest().body(stringBuilder.toString());
+        }
         WorkScheduleOutputDto workScheduleOutputDto = workScheduleService.updateOneWorkSchedule(workScheduleInputDto, id);
         return ResponseEntity.accepted().body(workScheduleOutputDto);
+    }
+
+    @PutMapping("/{id}/user/{userId}")
+    public ResponseEntity<String> assignUserToWorkSchedules(@PathVariable Long id, @PathVariable Long userId){
+        String assignedWorkSchedule = workScheduleService.assignUserToWorkSchedules(id, userId);
+        return ResponseEntity.ok().body(assignedWorkSchedule);
     }
 //    ----------------------------------------------------------------------
 //    Delete

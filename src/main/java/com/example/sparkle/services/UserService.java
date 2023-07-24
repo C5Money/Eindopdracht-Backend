@@ -138,8 +138,6 @@ public class UserService {
         UserOutputDto userOutputDto = new UserOutputDto();
         userOutputDto.id = user.getId();
         userOutputDto.userName = user.getUserName();
-        userOutputDto.email = user.getEmail();
-        userOutputDto.password = user.getPassword();
         userOutputDto.firstName = user.getFirstName();
         userOutputDto.lastName = user.getLastName();
         userOutputDto.zipCode = user.getZipCode();
