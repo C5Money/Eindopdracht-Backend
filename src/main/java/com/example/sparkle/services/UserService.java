@@ -81,7 +81,7 @@ public class UserService {
         }
     }
 
-    public UserOutputDto assignCustomerCardToUser(Long id, Long cardNumber){
+    public String assignCustomerCardToUser(Long id, Long cardNumber){
         Optional<User> optionalUser = userRepository.findById(id);
         Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
 
@@ -92,7 +92,7 @@ public class UserService {
         CustomerCard updatableCustomerCard = optionalCustomerCard.get();
         updatableUser.setCustomerCard(updatableCustomerCard);
         User updatedUser = userRepository.save(updatableUser);
-        return entityToOutputDto(updatedUser);
+        return "Customercard with cardnumber: " + cardNumber + " has successfully been assigned to user-id: " + id + ".";
     }
 //    ----------------------------------------------------------------------
 //    Delete
@@ -152,5 +152,7 @@ public class UserService {
         userOutputDto.workSchedules = user.getWorkSchedules();
         return userOutputDto;
     }
+
+
 
 }

@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserOutputDto>> readAllWorkSchedules(){
+    public ResponseEntity<List<UserOutputDto>> readAllUsers(){
         List<UserOutputDto> userDtoList = userService.readAllUsers();
         return ResponseEntity.ok().body(userDtoList);
     }
@@ -82,8 +82,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/customercard/{cardNumber}")
-    public ResponseEntity<UserOutputDto> assignCustomerCardToUser(@PathVariable Long id, @PathVariable Long cardNumber){
-        UserOutputDto userOutputDto = userService.assignCustomerCardToUser(id, cardNumber);
+    public ResponseEntity<String> assignCustomerCardToUser(@PathVariable Long id, @PathVariable Long cardNumber){
+        String userOutputDto = userService.assignCustomerCardToUser(id, cardNumber);
         return ResponseEntity.ok().body(userOutputDto);
     }
 //    ----------------------------------------------------------------------

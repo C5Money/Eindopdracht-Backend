@@ -55,7 +55,7 @@ public class CustomerCardController {
     }
 
     @GetMapping("/status/{cardStatus}")
-    public ResponseEntity<List<CustomerCardOutputDto>> readOneCustomerCardByCardStatus(@PathVariable CardStatus cardStatus){
+    public ResponseEntity<List<CustomerCardOutputDto>> readAllCustomerCardByCardStatus(@PathVariable CardStatus cardStatus){
         List<CustomerCardOutputDto> cardDtoList = cardService.readAllCustomerCardsByCardStatus(cardStatus);
         return ResponseEntity.ok().body(cardDtoList);
     }

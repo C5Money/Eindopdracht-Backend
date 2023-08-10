@@ -4,18 +4,17 @@ import jakarta.validation.constraints.*;
 
 public class UserInputDto {
 //    Instance Variables
-    public Long userId;
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters long")
     public String userName;
 
-    @NotBlank(message = "Email is required")
-    @Email
-    public String email;
-
     @NotBlank
     @Size(min=6, max=30)
     public String password;
+
+    @NotBlank(message = "Email is required")
+    @Email
+    public String email;
 
     @NotBlank(message = "First name is required")
     @Size(max = 50, message = "First name cannot exceed 50 characters")

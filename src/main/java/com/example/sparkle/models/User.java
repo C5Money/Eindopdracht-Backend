@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,13 +16,10 @@ import java.util.List;
 public class User {
 //    Instance Variables
     @Id
-    @GeneratedValue
-    private Long id;
-
     private String userName;
-    private String email;
     private String password;
 
+    private String email;
     private String firstName;
     private String lastName;
     private String zipCode;
@@ -29,6 +28,14 @@ public class User {
 
 
 //    Relations
+    @OneToMany(
+            targetEntity = Authority.class,
+            mappedBy = "username",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    private Set<Authority> authorities = new HashSet<>();
+
     @OneToOne(cascade = CascadeType.ALL)
     private CustomerCard customerCard;
 

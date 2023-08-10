@@ -2,9 +2,11 @@ package com.example.sparkle.services;
 
 import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
+import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.models.CardStatus;
 import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.models.Product;
 import com.example.sparkle.repositories.CustomerCardRepository;
 import org.springframework.stereotype.Service;
 
@@ -106,6 +108,7 @@ private final CustomerCardRepository customerCardRepository;
 
         if(cardInputDto.amountSpend != null){
             cardEntity.setAmountSpend(cardInputDto.amountSpend);
+//            cardEntity.setAmountSpend(sumAmountSpend(cardEntity.getProducts());
         }
 
         if(cardInputDto.cardStatus == null){
@@ -157,11 +160,13 @@ private final CustomerCardRepository customerCardRepository;
         }
     }
 
-//    public Object sumProductsBought(List<ProductOutputDto> amount ){
-//        int sum = 0;
-//        for(ProductOutputDto spend : amount){
+//    public Double sumAmountSpend(Double priceAmount){
+//        List<Double> productsPrice = new ArrayList<>();
+//        productsPrice.add(priceAmount);
+//        Double sum = 0.0;
 //
-//            sum += spend.unitPrice;
+//        for(Double amount : productsPrice){
+//            sum += amount;
 //        }
 //        return sum;
 //    }
