@@ -1,158 +1,136 @@
 package com.example.sparkle.services;
 
-import com.example.sparkle.dtos.inputDto.UserInputDto;
-import com.example.sparkle.dtos.outputDto.UserOutputDto;
-import com.example.sparkle.exceptions.ResourceNotFoundException;
-import com.example.sparkle.models.CustomerCard;
+
+import com.example.sparkle.dtos.UserDto;
+import com.example.sparkle.exceptions.UsernameNotFoundException;
+import com.example.sparkle.models.Authority;
 import com.example.sparkle.models.User;
-import com.example.sparkle.repositories.CustomerCardRepository;
 import com.example.sparkle.repositories.UserRepository;
+import com.example.sparkle.utils.RandomStringGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
 //    Instance Variables
     private final UserRepository userRepository;
-    private final CustomerCardRepository customerCardRepository;
-
+    @Autowired
+    @Lazy
+    private PasswordEncoder passwordEncoder;
 //    Constructor
-    public UserService(UserRepository userRepository, CustomerCardRepository customerCardRepository) {
+
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.customerCardRepository = customerCardRepository;
     }
-//    CRUD:
+
+    //    CRUD:
 //    ----------------------------------------------------------------------
 //    Create
 //    ----------------------------------------------------------------------
-    public Long createUser(UserInputDto userInputDto){
-//        Optional<User> optionalUser = userRepository.findById(userInputDto.userId);
-//        if(optionalUser.isPresent()){
-//            throw new ResourceNotFoundException("User id: " + userInputDto.userId + " already exists.");
-//        }
-        User newUserEntity = inputDtoToEntity(userInputDto);
-        userRepository.save(newUserEntity);
-        return newUserEntity.getId();
+    public String createUser(UserDto userDto) {
+        String randomString = RandomStringGenerator.generateAlphaNumeric(20);
+        userDto.setApikey(randomString);
+        User newUser = userRepository.save(toUser(userDto));
+        return newUser.getUsername();
     }
 //    ----------------------------------------------------------------------
 //    Read
 //    ----------------------------------------------------------------------
-    public UserOutputDto readOneUserById(Long id){
-        Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty()){
-            throw new ResourceNotFoundException("User-id: " + id + " is invalid or doesn't exist.");
-        }
-        return entityToOutputDto(optionalUser.get());
-    }
-
-    public UserOutputDto readOneUserByUserName(String userName){
-        User foundUser = userRepository.findByUserNameContainingIgnoreCase(userName).orElseThrow(()-> new ResourceNotFoundException("User not found."));
-        return entityToOutputDto(foundUser);
-    }
-
-    public List<UserOutputDto> readAllUsers(){
-        List<User> userList = userRepository.findAll();
-        List<UserOutputDto> userOutputDtoList = new ArrayList<>();
-        if(userList.isEmpty()){
-            throw new ResourceNotFoundException("Users not found.");
+    public UserDto getUser(String username) {
+        UserDto dto = new UserDto();
+        Optional<User> user = userRepository.findById(username);
+        if (user.isPresent()) {
+            dto = fromUser(user.get());
         } else {
-            for(User userEntity : userList){
-                userOutputDtoList.add(entityToOutputDto(userEntity));
-            }
+            throw new UsernameNotFoundException("Username: " + username + " not found.");
         }
-        return userOutputDtoList;
+        return dto;
+    }
+
+    public List<UserDto> getUsers() {
+        List<UserDto> collection = new ArrayList<>();
+        List<User> list = userRepository.findAll();
+        for (User user : list) {
+            collection.add(fromUser(user));
+        }
+        return collection;
+    }
+
+    public boolean userExists(String username) {
+        return userRepository.existsById(username);
     }
 //    ----------------------------------------------------------------------
 //    Update
 //    ----------------------------------------------------------------------
-    public UserOutputDto updateOneUser(UserInputDto userInputDto, Long id){
-        Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isPresent()){
-            User updatableUser = optionalUser.get();
-            User updatedUser = updateInputDtoToEntity(userInputDto, updatableUser);
-
-            userRepository.save(updatedUser);
-            return entityToOutputDto(updatedUser);
-        } else {
-            throw new ResourceNotFoundException("User-id: " + id + " does not exist.");
-        }
-    }
-
-    public String assignCustomerCardToUser(Long id, Long cardNumber){
-        Optional<User> optionalUser = userRepository.findById(id);
-        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
-
-        if(optionalUser.isEmpty() && optionalCustomerCard.isEmpty()) {
-            throw new ResourceNotFoundException("User with id: " + id + " or customer card with cardnumber: " + cardNumber + " do not exist.");
-        }
-        User updatableUser = optionalUser.get();
-        CustomerCard updatableCustomerCard = optionalCustomerCard.get();
-        updatableUser.setCustomerCard(updatableCustomerCard);
-        User updatedUser = userRepository.save(updatableUser);
-        return "Customercard with cardnumber: " + cardNumber + " has successfully been assigned to user-id: " + id + ".";
+    public void updateUser(String username, UserDto newUser) {
+        if (!userRepository.existsById(username)) throw new UsernameNotFoundException("Username: " + username + " does not exist.");
+        User user = userRepository.findById(username).get();
+        user.setPassword(newUser.getPassword());
+        userRepository.save(user);
     }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
-    public void deleteOneUserById(Long id){
-        Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty()){
-            throw new ResourceNotFoundException("This inventory item's id: " + id + " is already deleted or doesn't exist.");
-        }
-        User foundUser = optionalUser.get();
-        userRepository.delete(foundUser);
+    public void deleteUser(String username) {
+        userRepository.deleteById(username);
     }
-//    MAPPERS:
 //    ----------------------------------------------------------------------
-//    InputDto to Entity
+//    Authority Mappers
 //    ----------------------------------------------------------------------
-    public User inputDtoToEntity(UserInputDto userInputDto){
-        User userEntity = new User();
-        userEntity.setId(userInputDto.userId);
-        userEntity.setUserName(userInputDto.userName);
-        userEntity.setEmail(userInputDto.email);
-        userEntity.setPassword(userInputDto.password);
-        userEntity.setFirstName(userInputDto.firstName);
-        userEntity.setLastName(userInputDto.lastName);
-        userEntity.setZipCode(userInputDto.zipCode);
-        userEntity.setAddress(userInputDto.address);
-        userEntity.setPhoneNumber(userInputDto.phoneNumber);
-        return userEntity;
+    public Set<Authority> getAuthorities(String username) {
+        if (!userRepository.existsById(username))throw new UsernameNotFoundException("Username: " + username + " does not exist.");
+        User user = userRepository.findById(username).get();
+        UserDto userDto = fromUser(user);
+        return userDto.getAuthorities();
     }
 
-    public User updateInputDtoToEntity(UserInputDto userInputDto, User userEntity){
-//        userEntity.setId(userInputDto.userId);
-        userEntity.setUserName(userInputDto.userName);
-        userEntity.setEmail(userInputDto.email);
-        userEntity.setPassword(userInputDto.password);
-        userEntity.setFirstName(userInputDto.firstName);
-        userEntity.setLastName(userInputDto.lastName);
-        userEntity.setZipCode(userInputDto.zipCode);
-        userEntity.setAddress(userInputDto.address);
-        userEntity.setPhoneNumber(userInputDto.phoneNumber);
-        return userEntity;
+    public void addAuthority(String username, String authority) {
+
+        if (!userRepository.existsById(username))throw new UsernameNotFoundException("Username: " + username + " does not exist.");
+        User user = userRepository.findById(username).get();
+        user.addAuthority(new Authority(username, authority));
+        userRepository.save(user);
     }
 
-//    ----------------------------------------------------------------------
-//    Entity to OutputDto
-//    ----------------------------------------------------------------------
-    public UserOutputDto entityToOutputDto(User user){
-        UserOutputDto userOutputDto = new UserOutputDto();
-        userOutputDto.id = user.getId();
-        userOutputDto.userName = user.getUserName();
-        userOutputDto.firstName = user.getFirstName();
-        userOutputDto.lastName = user.getLastName();
-        userOutputDto.zipCode = user.getZipCode();
-        userOutputDto.address = user.getAddress();
-        userOutputDto.phoneNumber = user.getPhoneNumber();
-        userOutputDto.customerCard = user.getCustomerCard();
-        userOutputDto.workSchedules = user.getWorkSchedules();
-        return userOutputDto;
+    public void removeAuthority(String username, String authority) {
+        if (!userRepository.existsById(username))throw new UsernameNotFoundException("Username: " + username + " does not exist.");
+        User user = userRepository.findById(username).get();
+        Authority authorityToRemove = user.getAuthorities().stream().filter((a) -> a.getAuthority().equalsIgnoreCase(authority)).findAny().get();
+        user.removeAuthority(authorityToRemove);
+        userRepository.save(user);
     }
 
+    public static UserDto fromUser(User user) {
 
+        var dto = new UserDto();
 
+        dto.username = user.getUsername();
+        dto.password = user.getPassword();
+        dto.enabled = user.isEnabled();
+        dto.apikey = user.getApikey();
+        dto.email = user.getEmail();
+        dto.authorities = user.getAuthorities();
+
+        return dto;
+    }
+
+    public User toUser(UserDto userDto) {
+
+        var user = new User();
+
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setEnabled(userDto.getEnabled());
+        user.setApikey(userDto.getApikey());
+        user.setEmail(userDto.getEmail());
+
+        return user;
+    }
 }

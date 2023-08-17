@@ -1,7 +1,7 @@
-package com.example.sparkle.models;
-
-public enum CardStatus {
-
-    BRONZE, SILVER, GOLD, PLATINUM;
-
-}
+//package com.example.sparkle.models;
+//
+//public enum CardStatus {
+//
+//    BRONZE, SILVER, GOLD, PLATINUM;
+//
+//}

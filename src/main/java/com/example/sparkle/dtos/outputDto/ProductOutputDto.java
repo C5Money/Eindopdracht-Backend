@@ -1,6 +1,6 @@
 package com.example.sparkle.dtos.outputDto;
 
-import com.example.sparkle.models.CustomerCard;
+//import com.example.sparkle.models.CustomerCard;
 import com.example.sparkle.models.Inventory;
 
 public class ProductOutputDto {
@@ -10,6 +10,6 @@ public class ProductOutputDto {
     public Double unitPrice;
     public Double availableStock;
     public Inventory inventory;
-    public CustomerCard customerCard;
+//    public CustomerCard customerCard;
 
 }

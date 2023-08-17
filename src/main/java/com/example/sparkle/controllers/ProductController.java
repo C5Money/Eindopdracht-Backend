@@ -87,11 +87,11 @@ public class ProductController {
         return ResponseEntity.ok().body(assignedProduct);
     }
 
-    @PutMapping("/{articleNumber}/cardnumber/{cardnumber}")
-    public ResponseEntity<String> assignProductToCustomerCard(@PathVariable Long articleNumber, @PathVariable Long cardnumber){
-        String assignedProduct = productService.assignProductToCustomerCard(articleNumber, cardnumber);
-        return ResponseEntity.ok().body(assignedProduct);
-    }
+//    @PutMapping("/{articleNumber}/cardnumber/{cardnumber}")
+//    public ResponseEntity<String> assignProductToCustomerCard(@PathVariable Long articleNumber, @PathVariable Long cardnumber){
+//        String assignedProduct = productService.assignProductToCustomerCard(articleNumber, cardnumber);
+//        return ResponseEntity.ok().body(assignedProduct);
+//    }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------

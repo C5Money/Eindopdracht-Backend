@@ -1,16 +1,13 @@
 package com.example.sparkle.exceptions;
 
-public class ResourceNotFoundException extends RuntimeException{
+public class BadRequestException extends RuntimeException {
 //    Instance Variables
     private static final long serialVersionUID = 1L;
-
-
 //    Constructor
-    public ResourceNotFoundException() {
+    public BadRequestException() {
         super();
     }
-
-    public ResourceNotFoundException(String message) {
+    public BadRequestException(String message) {
         super(message);
     }
 }
