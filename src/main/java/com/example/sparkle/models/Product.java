@@ -20,10 +20,10 @@ public class Product {
     private String category;
 
 //    Relations
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    @JoinColumn(name = "customerCard_id")
-//    private CustomerCard customerCard;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JoinColumn(name = "customerCard_id")
+    private CustomerCard customerCard;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore

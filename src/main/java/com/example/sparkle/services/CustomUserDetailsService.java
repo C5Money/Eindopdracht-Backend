@@ -1,7 +1,6 @@
 package com.example.sparkle.services;
 
-
-import com.example.sparkle.dtos.UserDto;
+import com.example.sparkle.dtos.outputDto.UserOutputDto;
 import com.example.sparkle.models.Authority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,12 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        UserDto userDto = userService.getUser(username);
+        UserOutputDto userOutputDto = userService.readUser(username);
 
 
-        String password = userDto.getPassword();
+        String password = userOutputDto.getPassword();
 
-        Set<Authority> authorities = userDto.getAuthorities();
+        Set<Authority> authorities = userOutputDto.getAuthorities();
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         for (Authority authority: authorities) {
             grantedAuthorities.add(new SimpleGrantedAuthority(authority.getAuthority()));

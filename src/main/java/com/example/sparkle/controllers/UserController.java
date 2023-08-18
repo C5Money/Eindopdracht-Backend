@@ -1,11 +1,15 @@
 package com.example.sparkle.controllers;
 
-import com.example.sparkle.dtos.UserDto;
+
+import com.example.sparkle.dtos.inputDto.UserInputDto;
+import com.example.sparkle.dtos.outputDto.UserOutputDto;
 import com.example.sparkle.exceptions.BadRequestException;
 import com.example.sparkle.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 import java.net.URI;
 import java.util.List;
@@ -25,46 +29,43 @@ public class UserController {
 //    ----------------------------------------------------------------------
 //    Post
 //    ----------------------------------------------------------------------
-    @PostMapping(value = "")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto dto) {;
-
-        String newUsername = userService.createUser(dto);
+    @PostMapping
+    public ResponseEntity<Object> createUser( @RequestBody UserInputDto userInputDto) {;
+        String newUsername = userService.createUser(userInputDto);
         userService.addAuthority(newUsername, "ROLE_USER");
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(uri).body("User with username: " + newUsername + " is successfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
     @GetMapping(value = "/{username}")
-    public ResponseEntity<UserDto> getUser(@PathVariable("username") String username) {
-
-        UserDto optionalUser = userService.getUser(username);
-
-
+    public ResponseEntity<UserOutputDto> getUser(@PathVariable("username") String username) {
+        UserOutputDto optionalUser = userService.readUser(username);
         return ResponseEntity.ok().body(optionalUser);
-
     }
 
-    @GetMapping(value = "")
-    public ResponseEntity<List<UserDto>> getUsers() {
-
-        List<UserDto> userDtos = userService.getUsers();
-
-        return ResponseEntity.ok().body(userDtos);
+    @GetMapping
+    public ResponseEntity<List<UserOutputDto>> getUsers() {
+        List<UserOutputDto> userDtoList = userService.readUsers();
+        return ResponseEntity.ok().body(userDtoList);
     }
 //    ----------------------------------------------------------------------
 //    Put
 //    ----------------------------------------------------------------------
     @PutMapping(value = "/{username}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
-
-        userService.updateUser(username, dto);
-
+    public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody UserInputDto userInputDto) {
+        userService.updateUser(username, userInputDto);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{username}/customercard/{cardNumber}")
+    public ResponseEntity<String> assignCustomerCardToUser(@PathVariable String username, @PathVariable Long cardNumber) {
+        String userOutputDto = userService.assignCustomerCardToUser(username, cardNumber);
+        return ResponseEntity.ok().body(userOutputDto);
     }
 //    ----------------------------------------------------------------------
 //    Delete

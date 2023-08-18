@@ -1,10 +1,13 @@
 package com.example.sparkle.services;
 
-
-import com.example.sparkle.dtos.UserDto;
+import com.example.sparkle.dtos.inputDto.UserInputDto;
+import com.example.sparkle.dtos.outputDto.UserOutputDto;
+import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.exceptions.UsernameNotFoundException;
 import com.example.sparkle.models.Authority;
+import com.example.sparkle.models.CustomerCard;
 import com.example.sparkle.models.User;
+import com.example.sparkle.repositories.CustomerCardRepository;
 import com.example.sparkle.repositories.UserRepository;
 import com.example.sparkle.utils.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,43 +27,46 @@ public class UserService {
     @Autowired
     @Lazy
     private PasswordEncoder passwordEncoder;
+    private final CustomerCardRepository customerCardRepository;
 //    Constructor
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CustomerCardRepository customerCardRepository) {
         this.userRepository = userRepository;
+        this.customerCardRepository = customerCardRepository;
     }
 
     //    CRUD:
 //    ----------------------------------------------------------------------
 //    Create
 //    ----------------------------------------------------------------------
-    public String createUser(UserDto userDto) {
+    public String createUser(UserInputDto userInputDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
-        userDto.setApikey(randomString);
-        User newUser = userRepository.save(toUser(userDto));
+        userInputDto.setApikey(randomString);
+        User newUser = userRepository.save(inputDtoToEntity(userInputDto));
         return newUser.getUsername();
     }
 //    ----------------------------------------------------------------------
 //    Read
 //    ----------------------------------------------------------------------
-    public UserDto getUser(String username) {
-        UserDto dto = new UserDto();
-        Optional<User> user = userRepository.findById(username);
-        if (user.isPresent()) {
-            dto = fromUser(user.get());
-        } else {
-            throw new UsernameNotFoundException("Username: " + username + " not found.");
+    public UserOutputDto readUser(String username) {
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("Username: " + username + " is invalid or doesn't exist.");
         }
-        return dto;
+        return entityToOutputDto(optionalUser.get());
     }
 
-    public List<UserDto> getUsers() {
-        List<UserDto> collection = new ArrayList<>();
-        List<User> list = userRepository.findAll();
-        for (User user : list) {
-            collection.add(fromUser(user));
+    public List<UserOutputDto> readUsers() {
+        List<UserOutputDto> userOutputDtoList = new ArrayList<>();
+        List<User> userList = userRepository.findAll();
+        if(userList.isEmpty()){
+            throw new UsernameNotFoundException("Users not found.");
+        } else {
+            for(User userEntity : userList){
+                userOutputDtoList.add(entityToOutputDto(userEntity));
+            }
         }
-        return collection;
+        return userOutputDtoList;
     }
 
     public boolean userExists(String username) {
@@ -69,11 +75,27 @@ public class UserService {
 //    ----------------------------------------------------------------------
 //    Update
 //    ----------------------------------------------------------------------
-    public void updateUser(String username, UserDto newUser) {
+    public UserOutputDto updateUser(String username, UserInputDto newUser) {
         if (!userRepository.existsById(username)) throw new UsernameNotFoundException("Username: " + username + " does not exist.");
-        User user = userRepository.findById(username).get();
-        user.setPassword(newUser.getPassword());
-        userRepository.save(user);
+        User updatableUser = userRepository.findById(username).get();
+        User updatedUser = updateInputDtoToEntity( newUser, updatableUser);
+        updatableUser.setPassword(newUser.getPassword());
+        userRepository.save(updatableUser);
+        return entityToOutputDto(updatedUser);
+    }
+
+    public String assignCustomerCardToUser(String username, Long cardNumber){
+        Optional<User> optionalUser = userRepository.findById(username);
+        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
+
+        if(optionalUser.isEmpty() && optionalCustomerCard.isEmpty()) {
+            throw new ResourceNotFoundException("Username: " + username + " or customercard with cardnumber: " + cardNumber + " do not exist.");
+        }
+        User updatableUser = optionalUser.get();
+        CustomerCard updatableCustomerCard = optionalCustomerCard.get();
+        updatableUser.setCustomerCard(updatableCustomerCard);
+        userRepository.save(updatableUser);
+        return "Customercard with cardnumber: " + cardNumber + " has successfully been assigned to username: " + username + ".";
     }
 //    ----------------------------------------------------------------------
 //    Delete
@@ -87,12 +109,11 @@ public class UserService {
     public Set<Authority> getAuthorities(String username) {
         if (!userRepository.existsById(username))throw new UsernameNotFoundException("Username: " + username + " does not exist.");
         User user = userRepository.findById(username).get();
-        UserDto userDto = fromUser(user);
+        UserOutputDto userDto = entityToOutputDto(user);
         return userDto.getAuthorities();
     }
 
     public void addAuthority(String username, String authority) {
-
         if (!userRepository.existsById(username))throw new UsernameNotFoundException("Username: " + username + " does not exist.");
         User user = userRepository.findById(username).get();
         user.addAuthority(new Authority(username, authority));
@@ -107,30 +128,40 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public static UserDto fromUser(User user) {
-
-        var dto = new UserDto();
-
-        dto.username = user.getUsername();
-        dto.password = user.getPassword();
-        dto.enabled = user.isEnabled();
-        dto.apikey = user.getApikey();
-        dto.email = user.getEmail();
-        dto.authorities = user.getAuthorities();
-
-        return dto;
+//    MAPPERS:
+//    ----------------------------------------------------------------------
+//    InputDto to Entity
+//    ----------------------------------------------------------------------
+    public User inputDtoToEntity(UserInputDto userInputDto) {
+        User userEntity = new User();
+        userEntity.setUsername(userInputDto.username);
+        userEntity.setPassword(passwordEncoder.encode(userInputDto.password));
+        userEntity.setEnabled(userInputDto.enabled);
+        userEntity.setApikey(userInputDto.apikey);
+        userEntity.setEmail(userInputDto.email);
+        return userEntity;
     }
 
-    public User toUser(UserDto userDto) {
-
-        var user = new User();
-
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setEnabled(userDto.getEnabled());
-        user.setApikey(userDto.getApikey());
-        user.setEmail(userDto.getEmail());
-
-        return user;
+    public User updateInputDtoToEntity(UserInputDto userInputDto, User userEntity){
+        userEntity.setUsername(userInputDto.username);
+        userEntity.setPassword(passwordEncoder.encode(userInputDto.password));
+        userEntity.setEnabled(userInputDto.enabled);
+        userEntity.setApikey(userInputDto.apikey);
+        userEntity.setEmail(userInputDto.email);
+        return userEntity;
+    }
+//    ----------------------------------------------------------------------
+//    Entity to OutputDto
+//    ----------------------------------------------------------------------
+    public static UserOutputDto entityToOutputDto(User user) {
+        UserOutputDto userOutputDto = new UserOutputDto();
+        userOutputDto.username = user.getUsername();
+        userOutputDto.password = user.getPassword();
+        userOutputDto.enabled = user.isEnabled();
+        userOutputDto.apikey = user.getApikey();
+        userOutputDto.email = user.getEmail();
+        userOutputDto.authorities = user.getAuthorities();
+        userOutputDto.customerCard = user.getCustomerCard();
+        return userOutputDto;
     }
 }

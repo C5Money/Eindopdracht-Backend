@@ -2,10 +2,14 @@ package com.example.sparkle.models;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 public class User {
@@ -13,16 +17,12 @@ public class User {
     @Id
     @Column(nullable = false, unique = true)
     private String username;
-
     @Column(nullable = false, length = 255)
     private String password;
-
     @Column(nullable = false)
     private boolean enabled = true;
-
     @Column
     private String apikey;
-
     @Column
     private String email;
 
@@ -34,6 +34,9 @@ public class User {
             orphanRemoval = true,
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private CustomerCard customerCard;
 
 //    Getters & Setters
     public String getUsername() { return username; }
@@ -60,5 +63,7 @@ public class User {
     public void removeAuthority(Authority authority) {
         this.authorities.remove(authority);
     }
+
+
 
 }

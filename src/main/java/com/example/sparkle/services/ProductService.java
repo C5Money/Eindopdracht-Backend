@@ -3,10 +3,10 @@ package com.example.sparkle.services;
 import com.example.sparkle.dtos.inputDto.ProductInputDto;
 import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
-//import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.models.CustomerCard;
 import com.example.sparkle.models.Inventory;
 import com.example.sparkle.models.Product;
-//import com.example.sparkle.repositories.CustomerCardRepository;
+import com.example.sparkle.repositories.CustomerCardRepository;
 import com.example.sparkle.repositories.InventoryRepository;
 import com.example.sparkle.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,12 @@ import java.util.Optional;
 public class ProductService {
 //    Instance Variables
     private final ProductRepository productRepository;
-//    private final CustomerCardRepository customerCardRepository;
+    private final CustomerCardRepository customerCardRepository;
     private final InventoryRepository inventoryRepository;
 //    Constructor
-    public ProductService(ProductRepository productRepository, /*CustomerCardRepository customerCardRepository,*/ InventoryRepository inventoryRepository) {
+    public ProductService(ProductRepository productRepository, CustomerCardRepository customerCardRepository, InventoryRepository inventoryRepository) {
         this.productRepository = productRepository;
-//        this.customerCardRepository = customerCardRepository;
+        this.customerCardRepository = customerCardRepository;
         this.inventoryRepository = inventoryRepository;
     }
 //    CRUD:
@@ -94,23 +94,23 @@ public class ProductService {
         Product updatableProduct = optionalProduct.get();
         Inventory updatableInventoryItem = optionalInventoryItem.get();
         updatableProduct.setInventoryItem(updatableInventoryItem);
-        Product updatedProduct = productRepository.save(updatableProduct);
+        productRepository.save(updatableProduct);
         return "Product with id: " + articleNumber + " has successfully been assigned to inventory item id: " + inventoryItemId + ".";
     }
 
-//    public String assignProductToCustomerCard(Long articleNumber, Long cardNumber){
-//        Optional<Product> optionalProduct = productRepository.findById(articleNumber);
-//        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
-//
-//        if(optionalProduct.isEmpty() && optionalCustomerCard.isEmpty()){
-//            throw new ResourceNotFoundException("Product with id: " + articleNumber + " or cardnumber: " + cardNumber + " do not exist.");
-//        }
-//        Product updatableProduct = optionalProduct.get();
-//        CustomerCard updatableCustomerCard = optionalCustomerCard.get();
-//        updatableProduct.setCustomerCard(updatableCustomerCard);
-//        Product updatedProduct = productRepository.save(updatableProduct);
-//        return "Product with id: " + articleNumber + " has successfully been assigned to customercardnumber: " + cardNumber + ".";
-//    }
+    public String assignProductToCustomerCard(Long articleNumber, Long cardNumber){
+        Optional<Product> optionalProduct = productRepository.findById(articleNumber);
+        Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
+
+        if(optionalProduct.isEmpty() && optionalCustomerCard.isEmpty()){
+            throw new ResourceNotFoundException("Product with id: " + articleNumber + " or cardnumber: " + cardNumber + " do not exist.");
+        }
+        Product updatableProduct = optionalProduct.get();
+        CustomerCard updatableCustomerCard = optionalCustomerCard.get();
+        updatableProduct.setCustomerCard(updatableCustomerCard);
+        productRepository.save(updatableProduct);
+        return "Product with id: " + articleNumber + " has successfully been assigned to customercardnumber: " + cardNumber + ".";
+    }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------

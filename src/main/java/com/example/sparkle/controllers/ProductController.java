@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
 //    Instance Variables
     private final ProductService productService;
@@ -52,9 +52,9 @@ public class ProductController {
         return ResponseEntity.ok().body(productOutputDto);
     }
 
-    @GetMapping("/productname/{productname}")
-    public ResponseEntity<ProductOutputDto> readOneProductByName(@PathVariable String productname){
-        ProductOutputDto productOutputDto = productService.readOneProductName(productname);
+    @GetMapping("/name/{name}")
+    public ResponseEntity<ProductOutputDto> readOneProductByName(@PathVariable String name){
+        ProductOutputDto productOutputDto = productService.readOneProductName(name);
         return ResponseEntity.ok().body(productOutputDto);
     }
 
@@ -87,11 +87,11 @@ public class ProductController {
         return ResponseEntity.ok().body(assignedProduct);
     }
 
-//    @PutMapping("/{articleNumber}/cardnumber/{cardnumber}")
-//    public ResponseEntity<String> assignProductToCustomerCard(@PathVariable Long articleNumber, @PathVariable Long cardnumber){
-//        String assignedProduct = productService.assignProductToCustomerCard(articleNumber, cardnumber);
-//        return ResponseEntity.ok().body(assignedProduct);
-//    }
+    @PutMapping("/{articleNumber}/cardnumber/{cardnumber}")
+    public ResponseEntity<String> assignProductToCustomerCard(@PathVariable Long articleNumber, @PathVariable Long cardnumber){
+        String assignedProduct = productService.assignProductToCustomerCard(articleNumber, cardnumber);
+        return ResponseEntity.ok().body(assignedProduct);
+    }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------

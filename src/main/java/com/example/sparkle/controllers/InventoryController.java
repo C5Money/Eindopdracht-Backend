@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/inventory")
+@RequestMapping("/inventories")
 public class InventoryController {
 //    Instance Variables
     private final InventoryService inventoryService;
@@ -52,7 +52,7 @@ public class InventoryController {
         return ResponseEntity.ok().body(inventoryOutputDto);
     }
 
-    @GetMapping("/inventoryname/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<InventoryOutputDto> readOneInventoryItemByName(@PathVariable String name){
         InventoryOutputDto inventoryOutputDto = inventoryService.readOneInventoryItemName(name);
         return ResponseEntity.ok().body(inventoryOutputDto);
