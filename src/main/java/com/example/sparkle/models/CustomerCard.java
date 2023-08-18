@@ -13,8 +13,8 @@ import java.util.List;
 public class CustomerCard {
 //    Instance Variables
     @Id
+    @Column(nullable = false, unique = true)
     private Long cardNumber;
-
     private Double amountSpend;
     private CardStatus cardStatus;
 

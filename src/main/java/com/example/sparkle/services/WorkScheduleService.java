@@ -20,8 +20,8 @@ public class WorkScheduleService {
     private final WorkScheduleRepository workScheduleRepository;
     private final UserRepository userRepository;
 //    Constructor
-    public WorkScheduleService(WorkScheduleRepository workworkScheduleRepository, UserRepository userRepository){
-        this.workScheduleRepository = workworkScheduleRepository;
+    public WorkScheduleService(WorkScheduleRepository workScheduleRepository, UserRepository userRepository){
+        this.workScheduleRepository = workScheduleRepository;
         this.userRepository = userRepository;
     }
 //    CRUD:
@@ -35,9 +35,6 @@ public class WorkScheduleService {
 //        }
 
         WorkSchedule newWorkScheduleEntity =  inputDtoToEntity(workScheduleInputDto);
-
-//        Optional<User> optionalUser = userRepository.findById(workScheduleInputDto.)
-
         workScheduleRepository.save(newWorkScheduleEntity);
         return newWorkScheduleEntity.getId();
     }
@@ -87,7 +84,7 @@ public class WorkScheduleService {
         return entityToOutputDto(updatedWorkSchedule);
     }
 
-    public String assignUserToWorkSchedules(Long id, Long userId){
+    public String assignUserToWorkSchedules(Long id, String userId){
         Optional<WorkSchedule> optionalWorkSchedule = workScheduleRepository.findById(id);
         Optional<User> optionalUser = userRepository.findById(userId);
 
@@ -117,9 +114,9 @@ public class WorkScheduleService {
 //    ----------------------------------------------------------------------
     public WorkSchedule inputDtoToEntity(WorkScheduleInputDto workScheduleInputDto){
         WorkSchedule workScheduleEntity = new WorkSchedule();
-        if(workScheduleInputDto.id != null){
-            workScheduleEntity.setId(workScheduleInputDto.id);
-        }
+//        if(workScheduleInputDto.id != null){
+//            workScheduleEntity.setId(workScheduleInputDto.id);
+//        }
 
         if(workScheduleInputDto.startDate != null){
             workScheduleEntity.setStartDate(workScheduleInputDto.startDate);

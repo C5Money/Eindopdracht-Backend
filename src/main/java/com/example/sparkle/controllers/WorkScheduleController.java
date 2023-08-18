@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/workschedule")
+@RequestMapping("/workschedules")
 public class WorkScheduleController {
 //    Instance Variables
     private final WorkScheduleService workScheduleService;
@@ -85,7 +85,7 @@ public class WorkScheduleController {
     }
 
     @PutMapping("/{id}/user/{userId}")
-    public ResponseEntity<String> assignUserToWorkSchedules(@PathVariable Long id, @PathVariable Long userId){
+    public ResponseEntity<String> assignUserToWorkSchedules(@PathVariable Long id, @PathVariable String userId){
         String assignedWorkSchedule = workScheduleService.assignUserToWorkSchedules(id, userId);
         return ResponseEntity.ok().body(assignedWorkSchedule);
     }

@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/customercard")
+@RequestMapping("/customercards")
 public class CustomerCardController {
 //    Instance Variables
     private final CustomerCardService cardService;
@@ -55,7 +55,7 @@ public class CustomerCardController {
     }
 
     @GetMapping("/status/{cardStatus}")
-    public ResponseEntity<List<CustomerCardOutputDto>> readOneCustomerCardByCardStatus(@PathVariable CardStatus cardStatus){
+    public ResponseEntity<List<CustomerCardOutputDto>> readAllCustomerCardsByCardStatus(@PathVariable CardStatus cardStatus){
         List<CustomerCardOutputDto> cardDtoList = cardService.readAllCustomerCardsByCardStatus(cardStatus);
         return ResponseEntity.ok().body(cardDtoList);
     }

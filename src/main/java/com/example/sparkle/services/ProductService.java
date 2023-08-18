@@ -94,7 +94,7 @@ public class ProductService {
         Product updatableProduct = optionalProduct.get();
         Inventory updatableInventoryItem = optionalInventoryItem.get();
         updatableProduct.setInventoryItem(updatableInventoryItem);
-        Product updatedProduct = productRepository.save(updatableProduct);
+        productRepository.save(updatableProduct);
         return "Product with id: " + articleNumber + " has successfully been assigned to inventory item id: " + inventoryItemId + ".";
     }
 
@@ -108,7 +108,7 @@ public class ProductService {
         Product updatableProduct = optionalProduct.get();
         CustomerCard updatableCustomerCard = optionalCustomerCard.get();
         updatableProduct.setCustomerCard(updatableCustomerCard);
-        Product updatedProduct = productRepository.save(updatableProduct);
+        productRepository.save(updatableProduct);
         return "Product with id: " + articleNumber + " has successfully been assigned to customercardnumber: " + cardNumber + ".";
     }
 //    ----------------------------------------------------------------------
@@ -185,7 +185,7 @@ public class ProductService {
         productOutputDto.unitPrice = product.getUnitPrice();
         productOutputDto.availableStock = product.getAvailableStock();
         productOutputDto.inventory = product.getInventoryItem();
-        productOutputDto.customerCard = product.getCustomerCard();
+//        productOutputDto.customerCard = product.getCustomerCard();
         return productOutputDto;
     }
 }

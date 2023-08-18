@@ -1,21 +1,23 @@
 package com.example.sparkle.controllers;
 
+
 import com.example.sparkle.dtos.inputDto.UserInputDto;
 import com.example.sparkle.dtos.outputDto.UserOutputDto;
+import com.example.sparkle.exceptions.BadRequestException;
 import com.example.sparkle.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin
 @RestController
-@RequestMapping("/user")
+@RequestMapping(value = "/users")
 public class UserController {
 //    Instance Variables
     private final UserService userService;
@@ -28,71 +30,75 @@ public class UserController {
 //    Post
 //    ----------------------------------------------------------------------
     @PostMapping
-    public ResponseEntity<Object> createUser(@Valid @RequestBody UserInputDto userInputDto, BindingResult bindingResult){
-        if(bindingResult.hasFieldErrors()){
-            StringBuilder stringBuilder = new StringBuilder();
-            for(FieldError fieldError : bindingResult.getFieldErrors()){
-                stringBuilder.append(fieldError.getField() + ": ");
-                stringBuilder.append(fieldError.getDefaultMessage());
-                stringBuilder.append("\n");
-            }
-            return ResponseEntity.badRequest().body(stringBuilder.toString());
-        }
-        Long newUserDto = userService.createUser(userInputDto);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + newUserDto ).toUriString());
-        userInputDto.userId = newUserDto;
-        return ResponseEntity.created(uri).body("User with user id: " + userInputDto.userId + " is succesfully created.");
+    public ResponseEntity<Object> createUser( @RequestBody UserInputDto userInputDto) {;
+        String newUsername = userService.createUser(userInputDto);
+        userService.addAuthority(newUsername, "ROLE_USER");
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
+                .buildAndExpand(newUsername).toUri();
+
+        return ResponseEntity.created(uri).body("User with username: " + newUsername + " is successfully created.");
     }
 //    ----------------------------------------------------------------------
 //    Get
 //    ----------------------------------------------------------------------
-    @GetMapping("/{id}")
-    public ResponseEntity<UserOutputDto> readOneUserById(@PathVariable Long id){
-        UserOutputDto userOutputDto = userService.readOneUserById(id);
-        return ResponseEntity.ok().body(userOutputDto);
-    }
-
-    @GetMapping("/name/{userName}")
-    public ResponseEntity<UserOutputDto> readOneUserByUserName(@PathVariable String userName){
-        UserOutputDto userOutputDto = userService.readOneUserByUserName(userName);
-        return ResponseEntity.ok().body(userOutputDto);
+    @GetMapping(value = "/{username}")
+    public ResponseEntity<UserOutputDto> getUser(@PathVariable("username") String username) {
+        UserOutputDto optionalUser = userService.readUser(username);
+        return ResponseEntity.ok().body(optionalUser);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserOutputDto>> readAllWorkSchedules(){
-        List<UserOutputDto> userDtoList = userService.readAllUsers();
+    public ResponseEntity<List<UserOutputDto>> getUsers() {
+        List<UserOutputDto> userDtoList = userService.readUsers();
         return ResponseEntity.ok().body(userDtoList);
     }
 //    ----------------------------------------------------------------------
 //    Put
 //    ----------------------------------------------------------------------
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@Valid @PathVariable Long id, @RequestBody UserInputDto userInputDto, BindingResult bindingResult){
-        if(bindingResult.hasFieldErrors()){
-            StringBuilder stringBuilder = new StringBuilder();
-            for(FieldError fieldError : bindingResult.getFieldErrors()){
-                stringBuilder.append(fieldError.getField() + ": ");
-                stringBuilder.append(fieldError.getDefaultMessage());
-                stringBuilder.append("\n");
-            }
-            return ResponseEntity.badRequest().body(stringBuilder.toString());
-        }
-        UserOutputDto userOutputDto = userService.updateOneUser(userInputDto, id);
-        return ResponseEntity.ok().body(userOutputDto);
+    @PutMapping(value = "/{username}")
+    public ResponseEntity<Object> updateUser(@PathVariable("username") String username, @RequestBody UserInputDto userInputDto) {
+        userService.updateUser(username, userInputDto);
+        return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/customercard/{cardNumber}")
-    public ResponseEntity<UserOutputDto> assignCustomerCardToUser(@PathVariable Long id, @PathVariable Long cardNumber){
-        UserOutputDto userOutputDto = userService.assignCustomerCardToUser(id, cardNumber);
+    @PutMapping("/{username}/customercard/{cardNumber}")
+    public ResponseEntity<String> assignCustomerCardToUser(@PathVariable String username, @PathVariable Long cardNumber) {
+        String userOutputDto = userService.assignCustomerCardToUser(username, cardNumber);
         return ResponseEntity.ok().body(userOutputDto);
     }
 //    ----------------------------------------------------------------------
 //    Delete
 //    ----------------------------------------------------------------------
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteOneUserById(@PathVariable Long id){
-        userService.deleteOneUserById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping(value = "/{username}")
+    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
+        userService.deleteUser(username);
+        return ResponseEntity.noContent().build();
+    }
+//    ----------------------------------------------------------------------
+//    Authority
+//    ----------------------------------------------------------------------
+    @PostMapping(value = "/{username}/authorities")
+    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
+        try {
+            String authorityName = (String) fields.get("authority");
+            userService.addAuthority(username, authorityName);
+            return ResponseEntity.noContent().build();
+        }
+        catch (Exception ex) {
+            throw new BadRequestException();
+        }
+    }
+
+    @GetMapping(value = "/{username}/authorities")
+    public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
+        return ResponseEntity.ok().body(userService.getAuthorities(username));
+    }
+
+    @DeleteMapping(value = "/{username}/authorities/{authority}")
+    public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
+        userService.removeAuthority(username, authority);
+        return ResponseEntity.noContent().build();
     }
 
 }
