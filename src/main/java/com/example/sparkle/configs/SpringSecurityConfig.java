@@ -71,15 +71,15 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasRole("ADMIN")
                 // endpoint customercards
                 .requestMatchers(HttpMethod.POST, "/customercards").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/customercards/{cardNumber}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/customercards/{cardNumber}").hasAnyRole("USER","ADMIN")
                 .requestMatchers(HttpMethod.GET, "/customercards/status/{cardNumber}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/customercards").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/customercards/{cardNumber}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/customercards/{cardNumber}").hasRole("ADMIN")
                 // endpoint products
                 .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/products/{articleNumber}").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/products/name/{name}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/products/{articleNumber}").hasAnyRole("EMPLOYER","ADMIN")
+                .requestMatchers(HttpMethod.GET, "/products/name/{name}").hasAnyRole("EMPLOYER","ADMIN")
                 .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/products/{articleNumber}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/products/{articleNumber}/inventory/{inventoryId}").hasRole("ADMIN")
@@ -102,5 +102,4 @@ public class SpringSecurityConfig {
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }
