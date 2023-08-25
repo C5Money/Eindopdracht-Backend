@@ -81,7 +81,7 @@ public class ProductController {
         return ResponseEntity.ok().body(productOutputDto);
     }
 
-    @PutMapping("/{articleNumber}/inventory/{inventoryId}")
+    @PutMapping("/{articleNumber}/inventories/{inventoryId}")
     public ResponseEntity<String> assignProductToInventoryItem(@PathVariable Long articleNumber, @PathVariable Long inventoryId){
         String assignedProduct = productService.assignProductToInventoryItem(articleNumber, inventoryId);
         return ResponseEntity.ok().body(assignedProduct);

@@ -84,7 +84,7 @@ public class WorkScheduleController {
         return ResponseEntity.accepted().body(workScheduleOutputDto);
     }
 
-    @PutMapping("/{id}/user/{userId}")
+    @PutMapping("/{id}/users/{userId}")
     public ResponseEntity<String> assignUserToWorkSchedules(@PathVariable Long id, @PathVariable String userId){
         String assignedWorkSchedule = workScheduleService.assignUserToWorkSchedules(id, userId);
         return ResponseEntity.ok().body(assignedWorkSchedule);

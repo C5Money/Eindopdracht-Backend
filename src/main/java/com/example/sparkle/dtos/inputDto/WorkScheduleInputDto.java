@@ -1,5 +1,6 @@
 package com.example.sparkle.dtos.inputDto;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,10 +13,12 @@ public class WorkScheduleInputDto {
 
     @NotNull(message = "Start date is required")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent
     public LocalDate startDate;
 
     @NotNull(message = "End date is required")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent
     public LocalDate endDate;
 
     @NotNull(message = "hours per week is required")

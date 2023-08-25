@@ -35,13 +35,14 @@ public class UserService {
         this.customerCardRepository = customerCardRepository;
     }
 
-    //    CRUD:
+//    CRUD:
 //    ----------------------------------------------------------------------
 //    Create
 //    ----------------------------------------------------------------------
     public String createUser(UserInputDto userInputDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userInputDto.setApikey(randomString);
+
         User newUser = userRepository.save(inputDtoToEntity(userInputDto));
         return newUser.getUsername();
     }
@@ -157,11 +158,11 @@ public class UserService {
         UserOutputDto userOutputDto = new UserOutputDto();
         userOutputDto.username = user.getUsername();
         userOutputDto.password = user.getPassword();
-        userOutputDto.enabled = user.isEnabled();
         userOutputDto.apikey = user.getApikey();
         userOutputDto.email = user.getEmail();
         userOutputDto.authorities = user.getAuthorities();
         userOutputDto.customerCard = user.getCustomerCard();
+        userOutputDto.workSchedule = user.getWorkSchedule();
         return userOutputDto;
     }
 }

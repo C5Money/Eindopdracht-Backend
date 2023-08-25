@@ -62,7 +62,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{username}/customercard/{cardNumber}")
+    @PutMapping("/{username}/customercards/{cardNumber}")
     public ResponseEntity<String> assignCustomerCardToUser(@PathVariable String username, @PathVariable Long cardNumber) {
         String userOutputDto = userService.assignCustomerCardToUser(username, cardNumber);
         return ResponseEntity.ok().body(userOutputDto);
@@ -100,5 +100,4 @@ public class UserController {
         userService.removeAuthority(username, authority);
         return ResponseEntity.noContent().build();
     }
-
 }

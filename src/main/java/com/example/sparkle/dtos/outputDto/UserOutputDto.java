@@ -2,8 +2,10 @@ package com.example.sparkle.dtos.outputDto;
 
 import com.example.sparkle.models.Authority;
 import com.example.sparkle.models.CustomerCard;
+import com.example.sparkle.models.WorkSchedule;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -11,13 +13,14 @@ public class UserOutputDto {
 
     public String username;
     public String password;
-    public Boolean enabled;
+//    public Boolean enabled;
     public String apikey;
     public String email;
     @JsonSerialize
     public Set<Authority> authorities;
 
     public CustomerCard customerCard;
+    public List<WorkSchedule> workSchedule;
 
 
     public String getUsername() {
@@ -28,9 +31,9 @@ public class UserOutputDto {
         return password;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
-    }
+//    public Boolean getEnabled() {
+//        return enabled;
+//    }
 
     public String getApikey() {
         return apikey;

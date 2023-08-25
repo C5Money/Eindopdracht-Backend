@@ -2,11 +2,9 @@ package com.example.sparkle.services;
 
 import com.example.sparkle.dtos.inputDto.CustomerCardInputDto;
 import com.example.sparkle.dtos.outputDto.CustomerCardOutputDto;
-import com.example.sparkle.dtos.outputDto.ProductOutputDto;
 import com.example.sparkle.exceptions.ResourceNotFoundException;
 import com.example.sparkle.models.CardStatus;
 import com.example.sparkle.models.CustomerCard;
-import com.example.sparkle.models.Product;
 import com.example.sparkle.repositories.CustomerCardRepository;
 import org.springframework.stereotype.Service;
 
@@ -119,16 +117,20 @@ private final CustomerCardRepository customerCardRepository;
     }
 
     public CustomerCard updateInputDtoToEntity(CustomerCardInputDto cardInputDto, CustomerCard cardEntity){
-//        if(cardInputDto.cardNumber != null ){
-//            if(cardEntity.getCardNumber().equals(cardInputDto.cardNumber)){
-//                throw new ResourceNotFoundException("Customercard with card-number: " + cardInputDto.cardNumber + " already exists.");
-//            } else {
-//                cardEntity.setCardNumber(cardInputDto.cardNumber);
-//            }
-//        }
+        if(cardInputDto.cardNumber != null ){
+            if(cardEntity.getCardNumber().equals(cardInputDto.cardNumber)){
+                throw new ResourceNotFoundException("Customercard with card-number: " + cardInputDto.cardNumber + " already exists.");
+            } else {
+                cardEntity.setCardNumber(cardInputDto.cardNumber);
+            }
+        }
 
         if(cardInputDto.amountSpend != null){
             cardEntity.setAmountSpend(cardInputDto.amountSpend);
+        }
+
+        if(cardInputDto.cardStatus != null){
+            cardEntity.setCardStatus(automateSetCardStatus(cardInputDto.amountSpend));
         }
 
         return cardEntity;
@@ -159,15 +161,4 @@ private final CustomerCardRepository customerCardRepository;
             return CardStatus.PLATINUM;
         }
     }
-
-//    public Double sumAmountSpend(Double priceAmount){
-//        List<Double> productsPrice = new ArrayList<>();
-//        productsPrice.add(priceAmount);
-//        Double sum = 0.0;
-//
-//        for(Double amount : productsPrice){
-//            sum += amount;
-//        }
-//        return sum;
-//    }
 }
