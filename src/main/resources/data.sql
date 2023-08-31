@@ -23,5 +23,5 @@ INSERT INTO products(article_number, product_name, unit_price, available_stock, 
 
 
 --Insert data into the 'inventories' table
-INSERT INTO inventories(name, description, quantity)VALUES ('Watches', 'High quality watches with above average prices.', 2);
-INSERT INTO inventories(name, description, quantity)VALUES ('Rings', 'Silver engagement rings.', 3);
+INSERT INTO inventories( name, description, quantity)VALUES ('Watches', 'High quality watches with above average prices.', 2);
+INSERT INTO inventories( name, description, quantity)VALUES ('Rings', 'Silver engagement rings.', 3);
