@@ -12,8 +12,8 @@ import lombok.Setter;
 public class Product {
 //    Instance Variables
     @Id
+    @Column(nullable = false, unique = true)
     private Long articleNumber;
-
     private String productName;
     private Double unitPrice;
     private Double availableStock;
