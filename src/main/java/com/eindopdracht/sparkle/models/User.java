@@ -29,7 +29,7 @@ public class User {
     private boolean enabled = true;
     @Column
     private String apikey;
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
 
 //    Relations
