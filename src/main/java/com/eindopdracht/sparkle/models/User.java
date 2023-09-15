@@ -42,6 +42,7 @@ public class User {
     private Set<Authority> authorities = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private CustomerCard customerCard;
 
     @OneToMany(mappedBy = "user")

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class WorkSchedule {
 //    Instance Variables
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate startDate;

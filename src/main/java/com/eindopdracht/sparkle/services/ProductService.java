@@ -88,8 +88,8 @@ public class ProductService {
         Optional<Product> optionalProduct = productRepository.findById(articleNumber);
         Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(inventoryItemId);
 
-        if(optionalProduct.isEmpty() && optionalInventoryItem.isEmpty()){
-            throw new ResourceNotFoundException("Product with id: " + articleNumber + " or inventory item with id: " + inventoryItemId + " do not exist.");
+        if(optionalProduct.isEmpty() || optionalInventoryItem.isEmpty()){
+            throw new ResourceNotFoundException("Product with id: " + articleNumber + " or inventory item with id: " + inventoryItemId + " does not exist.");
         }
         Product updatableProduct = optionalProduct.get();
         Inventory updatableInventoryItem = optionalInventoryItem.get();
@@ -102,7 +102,7 @@ public class ProductService {
         Optional<Product> optionalProduct = productRepository.findById(articleNumber);
         Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
 
-        if(optionalProduct.isEmpty() && optionalCustomerCard.isEmpty()){
+        if(optionalProduct.isEmpty() || optionalCustomerCard.isEmpty()){
             throw new ResourceNotFoundException("Product with id: " + articleNumber + " or cardnumber: " + cardNumber + " do not exist.");
         }
         Product updatableProduct = optionalProduct.get();

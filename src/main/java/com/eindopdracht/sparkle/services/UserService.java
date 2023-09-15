@@ -89,7 +89,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(username);
         Optional<CustomerCard> optionalCustomerCard = customerCardRepository.findById(cardNumber);
 
-        if(optionalUser.isEmpty() && optionalCustomerCard.isEmpty()) {
+        if(optionalUser.isEmpty() || optionalCustomerCard.isEmpty()) {
             throw new ResourceNotFoundException("Username: " + username + " or customercard with cardnumber: " + cardNumber + " do not exist.");
         }
         User updatableUser = optionalUser.get();

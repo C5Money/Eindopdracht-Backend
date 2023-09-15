@@ -60,7 +60,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/workschedules/date/{date}").hasAnyRole("EMPLOYER","ADMIN")
                 .requestMatchers(HttpMethod.GET, "/workschedules").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/workschedules/{id}").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/workschedules/{id}/users/{userId}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/workschedules/{id}/users/{userName}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/workschedules/{id}").hasRole("ADMIN")
                 // endpoint users
                 .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
@@ -75,7 +75,7 @@ public class SpringSecurityConfig {
                 // endpoint customercards
                 .requestMatchers(HttpMethod.POST, "/customercards").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/customercards/{cardNumber}").hasAnyRole("USER", "EMPLOYER","ADMIN")
-                .requestMatchers(HttpMethod.GET, "/customercards/status/{cardNumber}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/customercards/status/{cardStatus}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/customercards").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/customercards/{cardNumber}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/customercards/{cardNumber}").hasRole("ADMIN")
@@ -87,7 +87,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/products/{articleNumber}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/products/{articleNumber}/inventories/{inventoryId}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/products/{articleNumber}/cardnumber/{cardnumber}").hasAnyRole("EMPLOYER","ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/products/{cardNumber}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/products/{articleNumber}").hasRole("ADMIN")
                 // endpoint inventories
                 .requestMatchers(HttpMethod.POST, "/inventories").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/inventories/{id}").hasRole("ADMIN")
