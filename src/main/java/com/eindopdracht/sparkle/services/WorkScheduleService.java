@@ -29,7 +29,6 @@ public class WorkScheduleService {
 //    Create
 //    ----------------------------------------------------------------------
     public Long createWorkSchedule(WorkScheduleInputDto workScheduleInputDto){
-        if(workScheduleRepository.existsById(workScheduleInputDto.id)) throw new ResourceNotFoundException("Workschedule " + workScheduleInputDto.id + " already exists.");
         WorkSchedule newWorkScheduleEntity =  inputDtoToEntity(workScheduleInputDto);
         workScheduleRepository.save(newWorkScheduleEntity);
         return newWorkScheduleEntity.getId();
@@ -80,18 +79,18 @@ public class WorkScheduleService {
         return entityToOutputDto(updatedWorkSchedule);
     }
 
-    public String assignUserToWorkSchedules(Long id, String userId){
+    public String assignUserToWorkSchedules(Long id, String userName){
         Optional<WorkSchedule> optionalWorkSchedule = workScheduleRepository.findById(id);
-        Optional<User> optionalUser = userRepository.findById(userId);
+        Optional<User> optionalUser = userRepository.findById(userName);
 
-        if(optionalWorkSchedule.isEmpty() && optionalUser.isEmpty()){
-            throw new ResourceNotFoundException("User with id: " + userId + " or workschedule with id: " + id + " do not exist.");
+        if(optionalWorkSchedule.isEmpty() || optionalUser.isEmpty()){
+            throw new ResourceNotFoundException("User with id: " + userName + " or workschedule with id: " + id + " do not exist.");
         }
         WorkSchedule updatableWorkSchedule = optionalWorkSchedule.get();
         User updatableUser = optionalUser.get();
         updatableWorkSchedule.setUser(updatableUser);
         WorkSchedule updatedWorkschedule = workScheduleRepository.save(updatableWorkSchedule);
-        return "Workschedule with id: " + id + " has succesfully been assigned to user-id:" + userId + ".";
+        return "Workschedule with id: " + id + " has succesfully been assigned to user: " + userName + ".";
     }
 //    ----------------------------------------------------------------------
 //    Delete
@@ -99,7 +98,7 @@ public class WorkScheduleService {
     public void deleteOneWorkScheduleId(Long id){
         Optional<WorkSchedule> optionalWorkSchedule = workScheduleRepository.findById(id);
         if(optionalWorkSchedule.isEmpty()){
-            throw new ResourceNotFoundException("This product: " + id + " is already deleted or doesn't exist.");
+            throw new ResourceNotFoundException("Workschedule with id: " + id + " is already deleted or doesn't exist.");
         }
         workScheduleRepository.deleteById(id);
     }
@@ -110,9 +109,9 @@ public class WorkScheduleService {
 //    ----------------------------------------------------------------------
     public WorkSchedule inputDtoToEntity(WorkScheduleInputDto workScheduleInputDto){
         WorkSchedule workScheduleEntity = new WorkSchedule();
-//        if(workScheduleInputDto.id != null){
-//            workScheduleEntity.setId(workScheduleInputDto.id);
-//        }
+        if(workScheduleInputDto.id != null){
+            workScheduleEntity.setId(workScheduleInputDto.id);
+        }
 
         if(workScheduleInputDto.startDate != null){
             workScheduleEntity.setStartDate(workScheduleInputDto.startDate);
@@ -128,9 +127,9 @@ public class WorkScheduleService {
     }
 
     public WorkSchedule updateInputDtoToEntity(WorkScheduleInputDto workScheduleInputDto, WorkSchedule workScheduleEntity){
-//        if(workScheduleInputDto.id != null){
-//            workScheduleEntity.setId(workScheduleInputDto.id);
-//        }
+        if(workScheduleInputDto.id != null){
+            workScheduleEntity.setId(workScheduleInputDto.id);
+        }
         if(workScheduleInputDto.startDate != null){
             workScheduleEntity.setStartDate(workScheduleInputDto.startDate);
         }

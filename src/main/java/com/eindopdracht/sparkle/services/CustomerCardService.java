@@ -144,6 +144,7 @@ public class CustomerCardService {
         cardOutputDto.amountSpend = customerCard.getAmountSpend();
         cardOutputDto.cardStatus = customerCard.getCardStatus();
         cardOutputDto.products = customerCard.getProducts();
+        cardOutputDto.user = customerCard.getUser();
         return cardOutputDto;
     }
 

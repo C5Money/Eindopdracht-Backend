@@ -7,12 +7,7 @@ INSERT INTO authorities (username, authority) VALUES ('employer', 'ROLE_EMPLOYER
 
 
 -- Insert data into the 'workschedules' table
-INSERT INTO work_schedules(id, start_date, end_date, hours_per_week)VALUES (1, '2023-8-28', '2023-9-2', 9);
-
-
--- Insert data into the 'customercards' table
-INSERT INTO customer_cards(card_number, amount_spend)VALUES (627, 8499.99);
-
+INSERT INTO work_schedules(start_date, end_date, hours_per_week)VALUES ('2023-8-28', '2023-9-2', 9);
 
 --Insert data into the 'products' table
 INSERT INTO products(article_number, product_name, unit_price, available_stock, category)VALUES (12489, 'Infinity Feelings', 1185.99, 3, 'Engagement Rings');

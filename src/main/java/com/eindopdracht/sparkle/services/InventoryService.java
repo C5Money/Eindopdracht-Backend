@@ -26,11 +26,6 @@ public class InventoryService {
 //    Create
 //    ----------------------------------------------------------------------
     public Long createInventoryItem(InventoryInputDto inventoryItemInputDto) {
-//        Optional<Inventory> optionalInventoryItem = inventoryRepository.findById(inventoryItemInputDto.id);
-//        if(optionalInventoryItem.isPresent()){
-//            throw new ResourceNotFoundException("Inventory item already exist.");
-//        }
-
         Inventory newInventoryItem = inputDtoToEntity(inventoryItemInputDto);
         inventoryRepository.save(newInventoryItem);
         return newInventoryItem.getId();

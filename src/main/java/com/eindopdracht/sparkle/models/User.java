@@ -29,7 +29,7 @@ public class User {
     private boolean enabled = true;
     @Column
     private String apikey;
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
 
 //    Relations
@@ -42,6 +42,7 @@ public class User {
     private Set<Authority> authorities = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private CustomerCard customerCard;
 
     @OneToMany(mappedBy = "user")
