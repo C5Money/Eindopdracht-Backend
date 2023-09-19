@@ -1,6 +1,7 @@
 package com.eindopdracht.sparkle.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -82,6 +83,111 @@ class CustomerCardServiceTest {
         assertThrows(ResourceNotFoundException.class,
                 () -> customerCardService.createCustomerCard(new CustomerCardInputDto(1L, 10.0d, CardStatus.BRONZE)));
         verify(customerCardRepository).findById(Mockito.<Long>any());
+    }
+
+
+    @Test
+    void testReadAllCustomerCardsByCardStatus() {
+        User user = new User();
+        user.setApikey("Apikey");
+        user.setAuthorities(new HashSet<>());
+        user.setCustomerCard(new CustomerCard());
+        user.setEmail("jane.doe@example.org");
+        user.setEnabled(true);
+        user.setPassword("iloveyou");
+        user.setUsername("janedoe");
+        user.setWorkSchedule(new ArrayList<>());
+
+        CustomerCard customerCard = new CustomerCard();
+        customerCard.setAmountSpend(10.0d);
+        customerCard.setCardNumber(1L);
+        customerCard.setCardStatus(CardStatus.BRONZE);
+        ArrayList<Product> products = new ArrayList<>();
+        customerCard.setProducts(products);
+        customerCard.setUser(user);
+
+        User user2 = new User();
+        user2.setApikey("Apikey");
+        user2.setAuthorities(new HashSet<>());
+        user2.setCustomerCard(customerCard);
+        user2.setEmail("jane.doe@example.org");
+        user2.setEnabled(true);
+        user2.setPassword("iloveyou");
+        user2.setUsername("janedoe");
+        user2.setWorkSchedule(new ArrayList<>());
+
+        CustomerCard customerCard2 = new CustomerCard();
+        customerCard2.setAmountSpend(10.0d);
+        customerCard2.setCardNumber(1L);
+        customerCard2.setCardStatus(CardStatus.BRONZE);
+        customerCard2.setProducts(new ArrayList<>());
+        customerCard2.setUser(user2);
+
+        ArrayList<CustomerCard> customerCardList = new ArrayList<>();
+        customerCardList.add(customerCard2);
+        when(customerCardRepository.findAllByCardStatus(Mockito.<CardStatus>any())).thenReturn(customerCardList);
+        List<CustomerCardOutputDto> actualReadAllCustomerCardsByCardStatusResult = customerCardService
+                .readAllCustomerCardsByCardStatus(CardStatus.BRONZE);
+        assertEquals(1, actualReadAllCustomerCardsByCardStatusResult.size());
+        CustomerCardOutputDto getResult = actualReadAllCustomerCardsByCardStatusResult.get(0);
+        assertEquals(10.0d, getResult.amountSpend.doubleValue());
+        assertSame(user2, getResult.user);
+        assertEquals(products, getResult.products);
+        assertEquals(1L, getResult.cardNumber.longValue());
+        assertEquals(CardStatus.BRONZE, getResult.cardStatus);
+        verify(customerCardRepository).findAllByCardStatus(Mockito.<CardStatus>any());
+    }
+
+
+    @Test
+    void testReadAllCustomerCards() {
+        User user = new User();
+        user.setApikey("Customercards not found.");
+        user.setAuthorities(new HashSet<>());
+        user.setCustomerCard(new CustomerCard());
+        user.setEmail("jane.doe@example.org");
+        user.setEnabled(true);
+        user.setPassword("iloveyou");
+        user.setUsername("janedoe");
+        user.setWorkSchedule(new ArrayList<>());
+
+        CustomerCard customerCard = new CustomerCard();
+        customerCard.setAmountSpend(10.0d);
+        customerCard.setCardNumber(1L);
+        customerCard.setCardStatus(CardStatus.BRONZE);
+        ArrayList<Product> products = new ArrayList<>();
+        customerCard.setProducts(products);
+        customerCard.setUser(user);
+
+        User user2 = new User();
+        user2.setApikey("Customercards not found.");
+        user2.setAuthorities(new HashSet<>());
+        user2.setCustomerCard(customerCard);
+        user2.setEmail("jane.doe@example.org");
+        user2.setEnabled(true);
+        user2.setPassword("iloveyou");
+        user2.setUsername("janedoe");
+        user2.setWorkSchedule(new ArrayList<>());
+
+        CustomerCard customerCard2 = new CustomerCard();
+        customerCard2.setAmountSpend(10.0d);
+        customerCard2.setCardNumber(1L);
+        customerCard2.setCardStatus(CardStatus.BRONZE);
+        customerCard2.setProducts(new ArrayList<>());
+        customerCard2.setUser(user2);
+
+        ArrayList<CustomerCard> customerCardList = new ArrayList<>();
+        customerCardList.add(customerCard2);
+        when(customerCardRepository.findAll()).thenReturn(customerCardList);
+        List<CustomerCardOutputDto> actualReadAllCustomerCardsResult = customerCardService.readAllCustomerCards();
+        assertEquals(1, actualReadAllCustomerCardsResult.size());
+        CustomerCardOutputDto getResult = actualReadAllCustomerCardsResult.get(0);
+        assertEquals(10.0d, getResult.amountSpend.doubleValue());
+        assertSame(user2, getResult.user);
+        assertEquals(products, getResult.products);
+        assertEquals(1L, getResult.cardNumber.longValue());
+        assertEquals(CardStatus.BRONZE, getResult.cardStatus);
+        verify(customerCardRepository).findAll();
     }
 
 
@@ -177,9 +283,10 @@ class CustomerCardServiceTest {
         CustomerCardOutputDto actualEntityToOutputDtoResult = customerCardService.entityToOutputDto(customerCard2);
         assertEquals(10.0d, actualEntityToOutputDtoResult.amountSpend.doubleValue());
         assertEquals(products, actualEntityToOutputDtoResult.products);
-        assertEquals(CardStatus.BRONZE, actualEntityToOutputDtoResult.cardStatus);
         assertEquals(1L, actualEntityToOutputDtoResult.cardNumber.longValue());
+        assertEquals(CardStatus.BRONZE, actualEntityToOutputDtoResult.cardStatus);
     }
+
 
     @Test
     void testAutomateSetCardStatus() {
