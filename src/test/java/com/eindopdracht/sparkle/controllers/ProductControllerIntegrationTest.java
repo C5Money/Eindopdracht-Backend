@@ -43,7 +43,7 @@ import org.springframework.validation.BindException;
 
 @ContextConfiguration(classes = {ProductController.class})
 @ExtendWith(SpringExtension.class)
-class ProductControllerTest {
+class ProductControllerIntegrationTest {
     @Autowired
     private ProductController productController;
 

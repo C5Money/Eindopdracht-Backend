@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ContextConfiguration(classes = {UserController.class})
 @ExtendWith(SpringExtension.class)
-class UserControllerTest {
+class UserControllerIntegrationTest {
     @Autowired
     private UserController userController;
 

@@ -2,6 +2,7 @@
 INSERT INTO users (username, password, enabled, apikey, email) VALUES ('clide', '$2a$12$DFgxZnJm8dnjqmVKStxXT.dTnwfUnphh17Htz2HUtkP7W5Sa1dKV2', true, '7847493', 'programming@home.nl');
 INSERT INTO users (username, password, enabled, apikey, email) VALUES ('employer', '$2a$12$wrPUVF5cG.3tKDO3b1c3ouPaDz.jwTky/n0zJJKxyGf3SpiVohooy', true, '7841233', 'working@store.nl');
 
+-- Assign a role to the two 'users'
 INSERT INTO authorities (username, authority) VALUES ('clide', 'ROLE_ADMIN');
 INSERT INTO authorities (username, authority) VALUES ('employer', 'ROLE_EMPLOYER');
 

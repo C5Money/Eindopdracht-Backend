@@ -37,8 +37,7 @@ public class SpringSecurityConfig {
                 .build();
     }
 
-// PasswordEncoderBean. Deze kun je overal in je applicatie injecteren waar nodig.
-// Je kunt dit ook in een aparte configuratie klasse zetten.
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
