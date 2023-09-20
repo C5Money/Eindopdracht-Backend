@@ -33,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -663,6 +664,49 @@ class ProductServiceTest {
         productService.deleteOneProductId(1L);
         verify(productRepository).findById(Mockito.<Long>any());
         verify(productRepository).delete(Mockito.<Product>any());
+    }
+
+    @Test
+    void testInputDtoToEntity(){
+        Product actualInputDtoToEntityResult = productService
+                .inputDtoToEntity(new ProductInputDto( "Name", 1L, 10.0d, 10.0d, "Cathegory" ));
+        assertEquals("The characteristics of someone or something", actualInputDtoToEntityResult.getProductName());
+        assertEquals(1L, actualInputDtoToEntityResult.getArticleNumber());
+        assertEquals(10.0d, actualInputDtoToEntityResult.getAvailableStock());
+        assertEquals("Category", actualInputDtoToEntityResult.getCategory());
+    }
+
+    @Test
+    void testUpdateInputDtoToEntity(){
+        ProductInputDto productInputDto = new ProductInputDto("Name", 1L, 10.0d, 10.0d, "Cathegory");
+
+        Product productEntity = new Product();
+        productEntity.setProductName("Name");
+        productEntity.setCategory("Category");
+        productEntity.setArticleNumber(1L);
+        productEntity.setUnitPrice(10.0d);
+        productEntity.setAvailableStock(10.0d);
+        Product actualUpdateInputDtoToEntityResult = productService.updateInputDtoToEntity(productInputDto, productEntity);
+        assertSame(productEntity, actualUpdateInputDtoToEntityResult);
+        assertEquals("Name", actualUpdateInputDtoToEntityResult.getProductName());
+        assertEquals("Category", actualUpdateInputDtoToEntityResult.getCategory());
+        assertEquals(1L, actualUpdateInputDtoToEntityResult.getArticleNumber().longValue());
+        assertEquals(10.0d, actualUpdateInputDtoToEntityResult.getUnitPrice().doubleValue());
+        assertEquals(10.0d, actualUpdateInputDtoToEntityResult.getAvailableStock().doubleValue());
+    }
+
+    @Test
+    void testEntityToOutputDto(){
+        Product product = new Product();
+        product.setAvailableStock(10.0d);
+        product.setProductName("Name");
+        product.setArticleNumber(1L);
+        product.setUnitPrice(10.0d);
+        ProductOutputDto actualEntityToOutputDtoResult = productService.entityToOutputDto(product);
+        assertEquals(10.0d, actualEntityToOutputDtoResult.availableStock.doubleValue());
+        assertEquals("Name", actualEntityToOutputDtoResult.productName);
+        assertEquals(1L, actualEntityToOutputDtoResult.articleNumber.longValue());
+        assertEquals(10.0d, actualEntityToOutputDtoResult.unitPrice.doubleValue());
     }
 }
 
